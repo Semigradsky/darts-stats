@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
+    "lint": "eslint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,6 +24,7 @@
   "homepage": "https://github.com/Semigradsky/darts-stats",
   "dependencies": {
     "bootstrap": "^3.3.5",
+    "flux": "^2.0.3",
     "font-awesome": "^4.4.0",
     "formsy-react": "^0.14.1",
     "formsy-react-components": "^0.4.0",

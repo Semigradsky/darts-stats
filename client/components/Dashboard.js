@@ -1,10 +1,12 @@
 import React from 'react';
 
+import LatestUsers from 'components/users/Latest';
+
 const Dashboard = React.createClass({
 	render() {
 		return (
 			<div>
-				<h1>Dashboard</h1>
+				<LatestUsers />
 				<p>Hello!</p>
 			</div>
 		);
