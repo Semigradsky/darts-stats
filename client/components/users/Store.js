@@ -11,21 +11,21 @@ const create = (data, fn) => {
 	data.id = random.uuid();
 	const users = JSON.parse(localStorage.getItem('users')) || [];
 	users.push(data);
-	localStorage.setItem('users', users);
+	localStorage.setItem('users', JSON.stringify(users));
 	fn(null, data.id);
 };
 
 const update = (id, data, fn) => {
 	let users = JSON.parse(localStorage.getItem('users')) || [];
-	users = users.map(user => user.id === id ? data : user);
-	localStorage.setItem('users', users);
+	users = users.map(user => user.id === id ? assign(user, data) : user);
+	localStorage.setItem('users', JSON.stringify(users));
 	fn(null, id);
 };
 
 const remove = (id, fn) => {
 	let users = JSON.parse(localStorage.getItem('users')) || [];
 	users = users.filter(user => user.id !== id);
-	localStorage.setItem('users', users);
+	localStorage.setItem('users', JSON.stringify(users));
 	fn(null, id);
 };
 
