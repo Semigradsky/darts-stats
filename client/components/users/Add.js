@@ -25,7 +25,7 @@ const AddUser = React.createClass({
 	},
 
 	onSelect(user) {
-		UserActions.update(user.id, { latest: true });
+		UserActions.doLatest(user.id);
 		this.refs.typeahead.setEntryText('');
 	},
 

@@ -12,6 +12,7 @@ const CreateUser = React.createClass({
 
 	onSubmit(data) {
 		this.setState({ dataSaved: false });
+		data.latest = true;
 		UserActions.create(data, () => {
 			this.close();
 		});
@@ -24,7 +25,7 @@ const CreateUser = React.createClass({
 	render() {
 		return (
 			<Formsy.Form onValidSubmit={this.onSubmit} className="form-horizontal form">
-				<FRC.Input type="text" name="name" label="Name" />
+				<FRC.Input type="text" name="name" label="Name" required />
 				<FRC.Row layout="horizontal">
 					<Loading progress={!this.state.dataSaved}>
 						<input className="btn btn-default" onClick={this.close} type="button" value="Cancel" />

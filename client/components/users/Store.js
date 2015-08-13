@@ -3,46 +3,45 @@ import assign from 'react/lib/Object.assign';
 
 import random from 'utils/random';
 import Dispatcher from 'utils/Dispatcher';
+import db from 'utils/db';
 import UserConstants from 'components/users/Constants';
 
 const CHANGE_EVENT = 'change';
 
 const create = (data, fn) => {
 	data.id = random.uuid();
-	const users = JSON.parse(localStorage.getItem('users')) || [];
+	const users = db.users;
 	users.push(data);
-	localStorage.setItem('users', JSON.stringify(users));
+	db.users = users;
 	fn(null, data.id);
 };
 
 const update = (id, data, fn) => {
-	let users = JSON.parse(localStorage.getItem('users')) || [];
+	let users = db.users;
 	users = users.map(user => user.id === id ? assign(user, data) : user);
-	localStorage.setItem('users', JSON.stringify(users));
+	db.users = users;
 	fn(null, id);
 };
 
 const remove = (id, fn) => {
-	let users = JSON.parse(localStorage.getItem('users')) || [];
-	users = users.filter(user => user.id !== id);
-	localStorage.setItem('users', JSON.stringify(users));
+	const users = db.users.filter(user => user.id !== id);
+	db.users = users;
 	fn(null, id);
 };
 
 const UserStore = assign({}, EventEmitter.prototype, {
 	getAll(fn) {
-		const users = JSON.parse(localStorage.getItem('users')) || [];
+		const users = db.users;
 		fn(null, users);
 	},
 
 	getLatest(fn) {
-		let users = JSON.parse(localStorage.getItem('users')) || [];
-		users = users.filter(user => user.latest);
+		const users = db.users.filter(user => user.latest);
 		fn(null, users);
 	},
 
 	get(id, fn) {
-		const users = JSON.parse(localStorage.getItem('users')) || [];
+		const users = db.users;
 		let user = null;
 		users.some(u => u.id === id ? user = u : false);
 		fn(null, user);

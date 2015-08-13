@@ -5,7 +5,7 @@ import UserActions from './Actions';
 const User = React.createClass({
 	removeFromLatest(event) {
 		event.preventDefault();
-		UserActions.update(this.props.id, { latest: false });
+		UserActions.doNotLatest(this.props.id);
 	},
 
 	render() {
