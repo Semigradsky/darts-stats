@@ -1,6 +1,7 @@
 import React from 'react';
 
 import UserStore from './Store';
+import User from 'components/users/User';
 
 const LatestUsers = React.createClass({
 	update() {
@@ -25,7 +26,11 @@ const LatestUsers = React.createClass({
 	render() {
 		return (
 			<ul>
-				{this.state.users.map(user => <li key={user.id}>{user.name}</li>)}
+				{this.state.users.map(user => (
+					<li key={user.id}>
+						<User {...user} />
+					</li>
+				))}
 			</ul>
 		);
 	}

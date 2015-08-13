@@ -10,7 +10,6 @@ var config = {
 
 	output: {
 		path: 'client',
-		publicPath: 'client/assets',
 		filename: 'bundle.js'
 	},
 
