@@ -17,8 +17,7 @@ const create = (data, fn) => {
 };
 
 const update = (id, data, fn) => {
-	let users = db.users;
-	users = users.map(user => user.id === id ? assign(user, data) : user);
+	const users = db.users.map(user => user.id === id ? assign(user, data) : user);
 	db.users = users;
 	fn(null, id);
 };
