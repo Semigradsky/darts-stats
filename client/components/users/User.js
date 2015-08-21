@@ -9,10 +9,11 @@ const User = React.createClass({
 	},
 
 	render() {
+		const { name, latest } = this.props;
 		return (
 			<div>
-				{this.props.name}
-				<a href="" onClick={this.removeFromLatest} className="remove fa fa-remove"></a>
+				{name}
+				{latest ? <a href="" onClick={this.removeFromLatest} className="remove fa fa-remove"></a> : null}
 			</div>
 		);
 	}

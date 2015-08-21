@@ -1,0 +1,26 @@
+{
+  "users": [
+    {
+      "name": "user01",
+      "latest": true,
+      "id": "34bbb990-6709-4218-8fc5-17e525ff63ce"
+    },
+    {
+      "name": "user02",
+      "latest": true,
+      "id": "90a6b94e-5081-49c3-b979-f65d6115d2bc"
+    }
+  ],
+  "latestPositions": [
+    {
+      "id": "90a6b94e-5081-49c3-b979-f65d6115d2bc",
+      "from": null,
+      "to": "34bbb990-6709-4218-8fc5-17e525ff63ce"
+    },
+    {
+      "id": "34bbb990-6709-4218-8fc5-17e525ff63ce",
+      "from": "90a6b94e-5081-49c3-b979-f65d6115d2bc",
+      "to": null
+    }
+  ]
+}

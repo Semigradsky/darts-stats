@@ -3,7 +3,8 @@ import keyMirror from 'react/lib/keyMirror';
 const UserConstants = keyMirror({
 	CREATE: null,
 	REMOVE: null,
-	UPDATE: null
+	UPDATE: null,
+	MOVE: null
 });
 
 export default UserConstants;

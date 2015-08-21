@@ -1,12 +1,17 @@
 import React from 'react';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd/modules/backends/HTML5';
+import async from 'async';
 
 import UserStore from './Store';
-import User from 'components/users/User';
+import UserActions from './Actions';
+import DraggableUser from 'components/users/DraggableUser';
+import orderByLinkedList from 'utils/orderByLinkedList';
 
 const LatestUsers = React.createClass({
 	update() {
-		UserStore.getLatest((err, data) => {
-			this.setState({ users: data });
+		async.parallel([UserStore.getLatest, UserStore.getPositions], (err, res) => {
+			this.setState({ users: orderByLinkedList.apply(null, res) });
 		});
 	},
 
@@ -23,12 +28,21 @@ const LatestUsers = React.createClass({
 		UserStore.removeChangeListener(this.update);
 	},
 
+	onMove(from, to) {
+		from !== to && UserActions.move(from, to);
+	},
+
+	revert() {
+		console.log('revert');
+	},
+
 	render() {
+		const { users } = this.state;
 		return (
 			<ul>
-				{this.state.users.map(user => (
+				{users.map(user => (
 					<li key={user.id}>
-						<User {...user} />
+						<DraggableUser {...user} onMove={this.onMove} revert={this.revert} />
 					</li>
 				))}
 			</ul>
@@ -36,4 +50,4 @@ const LatestUsers = React.createClass({
 	}
 });
 
-export default LatestUsers;
+export default DragDropContext(HTML5Backend)(LatestUsers);

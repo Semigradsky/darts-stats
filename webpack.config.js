@@ -29,7 +29,7 @@ var config = {
 
 	module: {
 		loaders: [
-			{ test: /\.js$/, loaders: ['react-hot', 'babel'], exclude: /node_modules/ },
+			{ test: /\.js$/, loaders: ['react-hot', 'babel?stage=0'], exclude: /node_modules/ },
 			{ test: /\.json$/, loader: 'json' },
 			{ test: /\.css$/, loader: 'style!css' },
 			{ test: /\.less$/, loader: 'style!css!less' },

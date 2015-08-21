@@ -19,20 +19,29 @@ const UserActions = {
 		});
 	},
 
-	doLatest(id, callback) {
-		UserActions.update(id, { latest: true }, callback);
-	},
-
-	doNotLatest(id, callback) {
-		UserActions.update(id, { latest: false }, callback);
-	},
-
 	remove(id, callback) {
 		Dispatcher.dispatch({
 			actionType: UserConstants.REMOVE,
 			id,
 			callback
 		});
+	},
+
+	move(from, to, callback) {
+		Dispatcher.dispatch({
+			actionType: UserConstants.MOVE,
+			from,
+			to,
+			callback
+		});
+	},
+
+	doLatest(id, callback) {
+		UserActions.update(id, { latest: true }, callback);
+	},
+
+	doNotLatest(id, callback) {
+		UserActions.update(id, { latest: false }, callback);
 	}
 
 };

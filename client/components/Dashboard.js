@@ -4,6 +4,7 @@ import Modal from 'components/popups/Modal';
 import LatestUsers from 'components/users/Latest';
 import AddUser from 'components/users/Add';
 import CreateUser from 'components/users/Create';
+import AllUsers from 'components/users/All';
 
 const Dashboard = React.createClass({
 	getInitialState() {
@@ -33,6 +34,7 @@ const Dashboard = React.createClass({
 					Create new
 				</button>
 				{createModal}
+				<AllUsers />
 			</div>
 		);
 	}
