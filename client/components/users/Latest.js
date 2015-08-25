@@ -1,22 +1,23 @@
 import React from 'react';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd/modules/backends/HTML5';
-import async from 'async';
 
 import UserStore from './Store';
 import UserActions from './Actions';
 import DraggableUser from 'components/users/DraggableUser';
-import orderByLinkedList from 'utils/orderByLinkedList';
+import arrange from 'utils/arrange';
+import find from 'utils/find';
+import findIndex from 'utils/findIndex';
 
 const LatestUsers = React.createClass({
 	update() {
-		async.parallel([UserStore.getLatest, UserStore.getPositions], (err, res) => {
-			this.setState({ users: orderByLinkedList.apply(null, res) });
+		UserStore.getLatest((err, res) => {
+			this.setState({ users: res.slice(), rearrangedUsers: res.slice() });
 		});
 	},
 
 	getInitialState() {
-		return { users: [] };
+		return { users: [], rearrangedUsers: [] };
 	},
 
 	componentDidMount() {
@@ -28,21 +29,30 @@ const LatestUsers = React.createClass({
 		UserStore.removeChangeListener(this.update);
 	},
 
-	onMove(from, to) {
+	onMove(from) {
+		const { users, rearrangedUsers } = this.state;
+		const to = users[findIndex(rearrangedUsers, { id: from })].id;
 		from !== to && UserActions.move(from, to);
 	},
 
+	onHover(from, to) {
+		if (from !== to) {
+			const { rearrangedUsers } = this.state;
+			arrange(rearrangedUsers, find(rearrangedUsers, { id: from }), find(rearrangedUsers, { id: to }));
+			this.setState({ rearrangedUsers });
+		}
+	},
+
 	revert() {
-		console.log('revert');
+		this.setState({ rearrangedUsers: this.state.users.slice() });
 	},
 
 	render() {
-		const { users } = this.state;
 		return (
 			<ul>
-				{users.map(user => (
+				{this.state.rearrangedUsers.map(user => (
 					<li key={user.id}>
-						<DraggableUser {...user} onMove={this.onMove} revert={this.revert} />
+						<DraggableUser {...user} isLatest={true} onMove={this.onMove} onHover={this.onHover} revert={this.revert} />
 					</li>
 				))}
 			</ul>

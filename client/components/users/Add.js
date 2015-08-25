@@ -1,13 +1,15 @@
 import React from 'react';
 import { Typeahead } from 'react-typeahead';
+import async from 'async';
 
 import UserStore from './Store';
 import UserActions from './Actions';
+import find from 'utils/find';
 
 const AddUser = React.createClass({
 	update() {
-		UserStore.getAll((err, data) => {
-			this.setState({ users: data.filter(x => !x.latest) });
+		async.parallel([ UserStore.getAll, UserStore.getLatest ], (err, data) => {
+			this.setState({ users: data[0].filter(x => !find(data[1], { id: x.id })) });
 		});
 	},
 

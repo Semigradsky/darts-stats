@@ -1,12 +1,12 @@
 import { EventEmitter } from 'events';
 import assign from 'react/lib/Object.assign';
-import async from 'async';
 
 import random from 'utils/random';
 import Dispatcher from 'utils/Dispatcher';
 import request from 'utils/request';
 import UserConstants from 'components/users/Constants';
 import find from 'utils/find';
+import arrange from 'utils/arrange';
 
 const CHANGE_EVENT = 'change';
 
@@ -21,17 +21,19 @@ const UserStore = assign({}, EventEmitter.prototype, {
 	},
 
 	getLatest(fn) {
-		cache.latestUsers ? fn(null, cache.latestUsers) :
-			request('get', 'users?latest=true',
-				(err, res) => err ? fn(err) : (cache.latestUsers = res.body, fn(null, res.body))
-			);
-	},
+		if (cache.latestUsers) {
+			return fn(null, cache.latestUsers);
+		}
 
-	getPositions(fn) {
-		cache.positions ? fn(null, cache.positions) :
-			request('get', 'latestPositions',
-				(err, res) => err ? fn(err) : (cache.positions = res.body, fn(null, res.body))
-		);
+		UserStore.getAll((err, users) => {
+			if (err) {
+				return fn(err);
+			}
+
+			const latestUsers = JSON.parse(localStorage.getItem('latestUsers')) || [];
+
+			fn(null, latestUsers.map(id => find(users, { id })).filter(x => x));
+		});
 	},
 
 	get(id, fn) {
@@ -41,7 +43,6 @@ const UserStore = assign({}, EventEmitter.prototype, {
 	emitChange() {
 		delete cache.users;
 		delete cache.latestUsers;
-		delete cache.positions;
 		this.emit(CHANGE_EVENT);
 	},
 
@@ -67,16 +68,49 @@ const remove = (id, fn) => {
 	request('delete', 'users/' + id, err => fn(err, id));
 };
 
-const move = (from, to, fn) => {
-	UserStore.getPositions((err, list) => {
-		const fromItem = find(list, { id: from });
-		const toItem = find(list, { id: to });
-
-		console.log(fromItem);
-		console.log(toItem);
-		console.log('---');
-
+const updateLatestUsers = (users, fn) => {
+	try {
+		localStorage.setItem('latestUsers', JSON.stringify(users));
 		fn(null);
+	} catch(e) {
+		fn(e);
+	}
+};
+
+const move = (from, to, fn) => {
+	UserStore.getLatest((err, list) => {
+		const newList = list.map(x => x.id);
+		arrange(newList, from, to);
+		updateLatestUsers(newList, fn);
+	});
+};
+
+const doLatest = (id, fn) => {
+	UserStore.getLatest((err, list) => {
+		const newList = list.map(x => x.id);
+
+		if (newList.indexOf(id) >= 0) {
+			return fn(null, id);
+		}
+
+		newList.push(id);
+		updateLatestUsers(newList, err => {
+			err ? fn(err) : fn(null, id);
+		});
+	});
+};
+
+const doNotLatest = (id, fn) => {
+	UserStore.getLatest((err, list) => {
+		const newList = list.map(x => x.id);
+
+		if (newList.indexOf(id) < 0) {
+			return fn(null, id);
+		}
+
+		updateLatestUsers(newList.filter(x => x !== id), err => {
+			err ? fn(err) : fn(null, id);
+		});
 	});
 };
 
@@ -105,6 +139,20 @@ Dispatcher.register((action) => {
 
 	case UserConstants.MOVE:
 		move(action.from, action.to, (err, data) => {
+			action.callback && action.callback(err, data);
+			!err && UserStore.emitChange();
+		});
+		break;
+
+	case UserConstants.DO_LATEST:
+		doLatest(action.id, (err, data) => {
+			action.callback && action.callback(err, data);
+			!err && UserStore.emitChange();
+		});
+		break;
+
+	case UserConstants.DO_NOT_LATEST:
+		doNotLatest(action.id, (err, data) => {
 			action.callback && action.callback(err, data);
 			!err && UserStore.emitChange();
 		});

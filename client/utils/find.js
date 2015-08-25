@@ -1,17 +1,8 @@
-function propertyMatches(item, criteria) {
-	return (property) => {
-		return item[property] === criteria[property];
-	};
-}
+import findIndex from 'utils/findIndex';
 
 function find(collection, criteria) {
-	for (let i = 0, l = collection.length; i < l; i++) {
-		if (Object.keys(criteria).every(propertyMatches(collection[i], criteria))) {
-			return collection[i];
-		}
-	}
-
-	return undefined;
+	const index = findIndex(collection, criteria);
+	return index >= 0 ? collection[index] : undefined;
 }
 
 export default find;

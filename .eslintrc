@@ -3,6 +3,7 @@
   "rules": {
     // Best Practices
     "no-new": 0,
+    "no-shadow": 0,
     // Possible Errors
     "comma-dangle": [2, "never"],
     // Style

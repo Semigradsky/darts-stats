@@ -16,13 +16,17 @@ const userSource = {
 			return props.revert();
 		}
 
-		props.onMove(result.from, result.to);
+		props.onMove(props.id);
 	}
 };
 
 const userTarget = {
 	drop(props, monitor) {
 		return { from: monitor.getItem().id, to: props.id };
+	},
+	hover(props, monitor) {
+		const draggedId = monitor.getItem().id;
+		props.onHover(draggedId, props.id);
 	}
 };
 

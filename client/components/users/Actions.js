@@ -37,11 +37,19 @@ const UserActions = {
 	},
 
 	doLatest(id, callback) {
-		UserActions.update(id, { latest: true }, callback);
+		Dispatcher.dispatch({
+			actionType: UserConstants.DO_LATEST,
+			id,
+			callback
+		});
 	},
 
 	doNotLatest(id, callback) {
-		UserActions.update(id, { latest: false }, callback);
+		Dispatcher.dispatch({
+			actionType: UserConstants.DO_NOT_LATEST,
+			id,
+			callback
+		});
 	}
 
 };

@@ -12,8 +12,8 @@ const CreateUser = React.createClass({
 
 	onSubmit(data) {
 		this.setState({ dataSaved: false });
-		data.latest = true;
-		UserActions.create(data, () => {
+		UserActions.create(data, (err, id) => {
+			UserActions.doLatest(id);
 			this.close();
 		});
 	},
