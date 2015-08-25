@@ -11,7 +11,7 @@ import findIndex from 'utils/findIndex';
 
 const LatestUsers = React.createClass({
 	update() {
-		UserStore.getLatest((err, res) => {
+		UserStore.getLatest().then(res => {
 			this.setState({ users: res.slice(), rearrangedUsers: res.slice() });
 		});
 	},
@@ -52,7 +52,12 @@ const LatestUsers = React.createClass({
 			<ul>
 				{this.state.rearrangedUsers.map(user => (
 					<li key={user.id}>
-						<DraggableUser {...user} isLatest={true} onMove={this.onMove} onHover={this.onHover} revert={this.revert} />
+						<DraggableUser {...user}
+							isLatest={true}
+							onMove={this.onMove}
+							onHover={this.onHover}
+							revert={this.revert}
+						/>
 					</li>
 				))}
 			</ul>

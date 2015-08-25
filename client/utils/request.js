@@ -1,3 +1,4 @@
+import Promise from 'promise';
 import superagent from 'superagent';
 
 function getRequester(type) {
@@ -36,4 +37,10 @@ function request(type, url, data, fn) {
 	});
 }
 
-export default request;
+export default function(type, url, data) {
+	return new Promise((resolve, reject) => {
+		request(type, url, data, (err, res) => {
+			err ? reject(err) : resolve(res.body);
+		});
+	});
+}

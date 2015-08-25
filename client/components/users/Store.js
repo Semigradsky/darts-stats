@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import Promise from 'promise';
 import assign from 'react/lib/Object.assign';
 
 import random from 'utils/random';
@@ -13,31 +14,34 @@ const CHANGE_EVENT = 'change';
 const cache = {};
 
 const UserStore = assign({}, EventEmitter.prototype, {
-	getAll(fn) {
-		cache.users ? fn(null, cache.users) :
-			request('get', 'users',
-				(err, res) => err ? fn(err) : (cache.users = res.body, fn(null, res.body))
-			);
-	},
-
-	getLatest(fn) {
-		if (cache.latestUsers) {
-			return fn(null, cache.latestUsers);
-		}
-
-		UserStore.getAll((err, users) => {
-			if (err) {
-				return fn(err);
+	getAll() {
+		return new Promise((resolve, reject) => {
+			if (cache.users) {
+				return resolve(cache.users);
 			}
 
-			const latestUsers = JSON.parse(localStorage.getItem('latestUsers')) || [];
-
-			fn(null, latestUsers.map(id => find(users, { id })).filter(x => x));
+			request('get', 'users').then(res => {
+				cache.users = res;
+				resolve(res);
+			}, reject);
 		});
 	},
 
-	get(id, fn) {
-		request('get', 'users/' + id, (err, res) => fn(err, res.body));
+	getLatest() {
+		return new Promise((resolve, reject) => {
+			if (cache.latestUsers) {
+				return resolve(cache.latestUsers);
+			}
+
+			UserStore.getAll().then(users => {
+				const latestUsers = JSON.parse(localStorage.getItem('latestUsers')) || [];
+				resolve(latestUsers.map(id => find(users, { id })).filter(x => x));
+			}, reject);
+		});
+	},
+
+	get(id) {
+		return request('get', 'users/' + id);
 	},
 
 	emitChange() {
@@ -55,112 +59,70 @@ const UserStore = assign({}, EventEmitter.prototype, {
 	}
 });
 
-const create = (data, fn) => {
-	data.id = random.uuid();
-	request('post', 'users/', data, err => fn(err, data.id));
+const updateLatestUsers = users => {
+	return new Promise((resolve, reject) => {
+		try {
+			localStorage.setItem('latestUsers', JSON.stringify(users));
+			resolve();
+		} catch(e) {
+			reject(e);
+		}
+	});
 };
 
-const update = (id, data, fn) => {
-	request('put', 'users/' + id, data, err => fn(err, id));
-};
+const UserHandlers = {
 
-const remove = (id, fn) => {
-	request('delete', 'users/' + id, err => fn(err, id));
-};
+	[UserConstants.CREATE](data) {
+		data.id = random.uuid();
+		return request('post', 'users/', data);
+	},
 
-const updateLatestUsers = (users, fn) => {
-	try {
-		localStorage.setItem('latestUsers', JSON.stringify(users));
-		fn(null);
-	} catch(e) {
-		fn(e);
+	[UserConstants.UPDATE](id, data) {
+		return request('put', 'users/' + id, data);
+	},
+
+	[UserConstants.REMOVE](id) {
+		return request('delete', 'users/' + id);
+	},
+
+	[UserConstants.MOVE](from, to) {
+		return UserStore.getLatest().then(list => {
+			const newList = list.map(x => x.id);
+			arrange(newList, from, to);
+			return updateLatestUsers(newList);
+		});
+	},
+
+	[UserConstants.DO_LATEST](id) {
+		return UserStore.getLatest().then(list => {
+			const newList = list.map(x => x.id);
+
+			if (newList.indexOf(id) >= 0) {
+				return Promise.resolve();
+			}
+
+			newList.push(id);
+			return updateLatestUsers(newList);
+		});
+	},
+
+	[UserConstants.DO_NOT_LATEST](id) {
+		return UserStore.getLatest().then(list => {
+			const newList = list.map(x => x.id);
+
+			if (newList.indexOf(id) < 0) {
+				return Promise.resolve();
+			}
+
+			return updateLatestUsers(newList.filter(x => x !== id));
+		});
 	}
-};
 
-const move = (from, to, fn) => {
-	UserStore.getLatest((err, list) => {
-		const newList = list.map(x => x.id);
-		arrange(newList, from, to);
-		updateLatestUsers(newList, fn);
-	});
-};
-
-const doLatest = (id, fn) => {
-	UserStore.getLatest((err, list) => {
-		const newList = list.map(x => x.id);
-
-		if (newList.indexOf(id) >= 0) {
-			return fn(null, id);
-		}
-
-		newList.push(id);
-		updateLatestUsers(newList, err => {
-			err ? fn(err) : fn(null, id);
-		});
-	});
-};
-
-const doNotLatest = (id, fn) => {
-	UserStore.getLatest((err, list) => {
-		const newList = list.map(x => x.id);
-
-		if (newList.indexOf(id) < 0) {
-			return fn(null, id);
-		}
-
-		updateLatestUsers(newList.filter(x => x !== id), err => {
-			err ? fn(err) : fn(null, id);
-		});
-	});
 };
 
 Dispatcher.register((action) => {
-	switch (action.actionType) {
-	case UserConstants.CREATE:
-		create(action.data, (err, data) => {
-			action.callback && action.callback(err, data);
-			!err && UserStore.emitChange();
-		});
-		break;
-
-	case UserConstants.UPDATE:
-		update(action.id, action.data, (err, data) => {
-			action.callback && action.callback(err, data);
-			!err && UserStore.emitChange();
-		});
-		break;
-
-	case UserConstants.REMOVE:
-		remove(action.id, (err, data) => {
-			action.callback && action.callback(err, data);
-			!err && UserStore.emitChange();
-		});
-		break;
-
-	case UserConstants.MOVE:
-		move(action.from, action.to, (err, data) => {
-			action.callback && action.callback(err, data);
-			!err && UserStore.emitChange();
-		});
-		break;
-
-	case UserConstants.DO_LATEST:
-		doLatest(action.id, (err, data) => {
-			action.callback && action.callback(err, data);
-			!err && UserStore.emitChange();
-		});
-		break;
-
-	case UserConstants.DO_NOT_LATEST:
-		doNotLatest(action.id, (err, data) => {
-			action.callback && action.callback(err, data);
-			!err && UserStore.emitChange();
-		});
-		break;
-
-	default:
-		// do nothing
-	}
+	const promise = UserHandlers[action.actionType].apply(null, action.args);
+	action.next(promise).then(UserStore.emitChange.bind(UserStore));
 });
 
 export default UserStore;

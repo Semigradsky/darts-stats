@@ -12,7 +12,7 @@ const CreateUser = React.createClass({
 
 	onSubmit(data) {
 		this.setState({ dataSaved: false });
-		UserActions.create(data, (err, id) => {
+		UserActions.create(data).then(id => {
 			UserActions.doLatest(id);
 			this.close();
 		});

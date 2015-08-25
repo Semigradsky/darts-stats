@@ -10,7 +10,7 @@ const sortByScore = (x, y) => {
 
 const AllUsers = React.createClass({
 	update() {
-		UserStore.getAll((err, data) => {
+		UserStore.getAll().then(data => {
 			this.setState({ users: data });
 		});
 	},
