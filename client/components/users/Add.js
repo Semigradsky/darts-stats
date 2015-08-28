@@ -1,16 +1,16 @@
 import React from 'react';
 import { Typeahead } from 'react-typeahead';
-import Promise from 'promise';
 
-import UserStore from './Store';
-import UserActions from './Actions';
+import UserStore from 'components/users/Store';
+import UserActions from 'components/users/Actions';
 import find from 'utils/find';
+import { logError } from 'utils/log';
 
 const AddUser = React.createClass({
 	update() {
 		Promise.all([ UserStore.getAll(), UserStore.getLatest() ]).then(data => {
 			this.setState({ users: data[0].filter(x => !find(data[1], { id: x.id })) });
-		});
+		}, logError);
 	},
 
 	getInitialState() {
@@ -27,21 +27,14 @@ const AddUser = React.createClass({
 	},
 
 	onSelect(user) {
-		UserActions.doLatest(user.id);
+		UserActions.doLatest(user.id).then(null, logError);
 		this.refs.typeahead.setEntryText('');
 	},
 
 	render() {
 		return (
 			<div>
-				<Typeahead
-					ref="typeahead"
-					options={this.state.users}
-					maxVisible={5}
-					filterOption="name"
-					displayOption="name"
-					onOptionSelected={this.onSelect}
-				/>
+
 			</div>
 		);
 	}

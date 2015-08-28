@@ -1,8 +1,9 @@
 import React from 'react';
 
-import UserStore from './Store';
-import UserActions from './Actions';
+import UserStore from 'components/users/Store';
+import UserActions from 'components/users/Actions';
 import User from 'components/users/User';
+import { logError } from 'utils/log';
 
 const sortByScore = (x, y) => {
 	return x.score - y.score;
@@ -12,7 +13,7 @@ const AllUsers = React.createClass({
 	update() {
 		UserStore.getAll().then(data => {
 			this.setState({ users: data });
-		});
+		}, logError);
 	},
 
 	getInitialState() {

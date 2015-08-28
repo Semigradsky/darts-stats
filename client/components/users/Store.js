@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events';
-import Promise from 'promise';
 import assign from 'react/lib/Object.assign';
 
 import random from 'utils/random';
@@ -15,28 +14,24 @@ const cache = {};
 
 const UserStore = assign({}, EventEmitter.prototype, {
 	getAll() {
-		return new Promise((resolve, reject) => {
-			if (cache.users) {
-				return resolve(cache.users);
-			}
+		if (cache.users) {
+			return Promise.resolve(cache.users);
+		}
 
-			request('get', 'users').then(res => {
-				cache.users = res;
-				resolve(res);
-			}, reject);
+		return request('get', 'users').then(res => {
+			cache.users = res;
+			return res;
 		});
 	},
 
 	getLatest() {
-		return new Promise((resolve, reject) => {
-			if (cache.latestUsers) {
-				return resolve(cache.latestUsers);
-			}
+		if (cache.latestUsers) {
+			return Promise.resolve(cache.latestUsers);
+		}
 
-			UserStore.getAll().then(users => {
-				const latestUsers = JSON.parse(localStorage.getItem('latestUsers')) || [];
-				resolve(latestUsers.map(id => find(users, { id })).filter(x => x));
-			}, reject);
+		return UserStore.getAll().then(users => {
+			const latestUsers = JSON.parse(localStorage.getItem('latestUsers')) || [];
+			return latestUsers.map(id => find(users, { id })).filter(x => x);
 		});
 	},
 
@@ -72,20 +67,20 @@ const updateLatestUsers = users => {
 
 const UserHandlers = {
 
-	[UserConstants.CREATE](data) {
+	[UserConstants.USER_CREATE](data) {
 		data.id = random.uuid();
 		return request('post', 'users/', data);
 	},
 
-	[UserConstants.UPDATE](id, data) {
+	[UserConstants.USER_UPDATE](id, data) {
 		return request('put', 'users/' + id, data);
 	},
 
-	[UserConstants.REMOVE](id) {
+	[UserConstants.USER_REMOVE](id) {
 		return request('delete', 'users/' + id);
 	},
 
-	[UserConstants.MOVE](from, to) {
+	[UserConstants.USER_MOVE](from, to) {
 		return UserStore.getLatest().then(list => {
 			const newList = list.map(x => x.id);
 			arrange(newList, from, to);
@@ -93,7 +88,7 @@ const UserHandlers = {
 		});
 	},
 
-	[UserConstants.DO_LATEST](id) {
+	[UserConstants.USER_DO_LATEST](id) {
 		return UserStore.getLatest().then(list => {
 			const newList = list.map(x => x.id);
 
@@ -106,7 +101,7 @@ const UserHandlers = {
 		});
 	},
 
-	[UserConstants.DO_NOT_LATEST](id) {
+	[UserConstants.USER_DO_NOT_LATEST](id) {
 		return UserStore.getLatest().then(list => {
 			const newList = list.map(x => x.id);
 
@@ -122,7 +117,9 @@ const UserHandlers = {
 
 Dispatcher.register((action) => {
 	const promise = UserHandlers[action.actionType].apply(null, action.args);
-	action.next(promise).then(UserStore.emitChange.bind(UserStore));
+	action.next(promise.then(res => {
+		::UserStore.emitChange(); return res;
+	}));
 });
 
 export default UserStore;

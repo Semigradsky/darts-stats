@@ -29,7 +29,7 @@ var config = {
 
 	module: {
 		loaders: [
-			{ test: /\.js$/, loaders: ['react-hot', 'babel?stage=0'], exclude: /node_modules/ },
+			{ test: /\.js$/, loaders: ['react-hot', 'babel?optional[]=runtime&stage=0'], exclude: /node_modules/ },
 			{ test: /\.json$/, loader: 'json' },
 			{ test: /\.css$/, loader: 'style!css' },
 			{ test: /\.less$/, loader: 'style!css!less' },
@@ -41,6 +41,9 @@ var config = {
 
 	plugins: [
 		new webpack.HotModuleReplacementPlugin(),
+		new webpack.ProvidePlugin({
+			'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+		}),
 		new webpack.NoErrorsPlugin()
 	]
 

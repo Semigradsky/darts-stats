@@ -1,0 +1,30 @@
+.latest-users {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+	.latest-user {
+		display: inline-block;
+		padding: 10px;
+		border-left: 1px solid #808080;
+		margin: 20px 0;
+
+		&:first-child {
+			border-left: none;
+		}
+
+		.draggable {
+			display: inline-block;
+		}
+
+		.dragging {
+			opacity: 0;
+		}
+
+		.dragging + .remove {
+			display: none;
+		}
+
+	}
+
+}

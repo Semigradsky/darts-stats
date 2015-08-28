@@ -41,7 +41,7 @@ class DraggableUser {
 	render() {
 		const { isDragging, connectDragSource, connectDropTarget } = this.props;
 		return connectDragSource(connectDropTarget(
-			<div style={{ opacity: isDragging ? 0 : 1 }}>
+			<div className={isDragging ? 'draggable dragging' : 'draggable'}>
 				<User {...this.props} />
 			</div>
 		));

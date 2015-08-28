@@ -1,12 +1,12 @@
-import keyMirror from 'react/lib/keyMirror';
+import enum from 'utils/enum';
 
-const UserConstants = keyMirror({
-	CREATE: null,
-	REMOVE: null,
-	UPDATE: null,
-	MOVE: null,
-	DO_LATEST: null,
-	DO_NOT_LATEST: null
-});
+const constants = enum([
+	'CREATE',
+	'REMOVE',
+	'UPDATE',
+	'MOVE',
+	'DO_LATEST',
+	'DO_NOT_LATEST'
+], 'USER');
 
-export default UserConstants;
+export default constants;

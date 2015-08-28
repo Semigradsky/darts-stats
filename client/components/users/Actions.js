@@ -17,12 +17,12 @@ function makeAction(actionType) {
 }
 
 const UserActions = {
-	create: makeAction(UserConstants.CREATE),
-	update: makeAction(UserConstants.UPDATE),
-	remove: makeAction(UserConstants.REMOVE),
-	move: makeAction(UserConstants.MOVE),
-	doLatest: makeAction(UserConstants.DO_LATEST),
-	doNotLatest: makeAction(UserConstants.DO_NOT_LATEST)
+	create: makeAction(UserConstants.USER_CREATE),
+	update: makeAction(UserConstants.USER_UPDATE),
+	remove: makeAction(UserConstants.USER_REMOVE),
+	move: makeAction(UserConstants.USER_MOVE),
+	doLatest: makeAction(UserConstants.USER_DO_LATEST),
+	doNotLatest: makeAction(UserConstants.USER_DO_NOT_LATEST)
 };
 
 export default UserActions;

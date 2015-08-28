@@ -2,18 +2,21 @@ import React from 'react';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd/modules/backends/HTML5';
 
-import UserStore from './Store';
-import UserActions from './Actions';
+import UserStore from 'components/users/Store';
+import UserActions from 'components/users/Actions';
 import DraggableUser from 'components/users/DraggableUser';
 import arrange from 'utils/arrange';
 import find from 'utils/find';
 import findIndex from 'utils/findIndex';
+import { logError } from 'utils/log';
+
+import './latest.less';
 
 const LatestUsers = React.createClass({
 	update() {
 		UserStore.getLatest().then(res => {
 			this.setState({ users: res.slice(), rearrangedUsers: res.slice() });
-		});
+		}, logError);
 	},
 
 	getInitialState() {
@@ -47,17 +50,23 @@ const LatestUsers = React.createClass({
 		this.setState({ rearrangedUsers: this.state.users.slice() });
 	},
 
+	removeFromLatest(id, event) {
+		event.preventDefault();
+		UserActions.doNotLatest(id).then(null, logError);
+	},
+
 	render() {
 		return (
-			<ul>
+			<ul className="latest-users">
 				{this.state.rearrangedUsers.map(user => (
-					<li key={user.id}>
+					<li key={user.id} className="latest-user">
 						<DraggableUser {...user}
 							isLatest={true}
 							onMove={this.onMove}
 							onHover={this.onHover}
 							revert={this.revert}
 						/>
+						<a href="#" onClick={this.removeFromLatest.bind(null, user.id)} className="remove fa fa-remove"></a>
 					</li>
 				))}
 			</ul>

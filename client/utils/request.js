@@ -1,46 +1,33 @@
-import Promise from 'promise';
-import superagent from 'superagent';
-
-function getRequester(type) {
-	return type === 'delete' ? superagent.del : superagent[type];
+function status(response) {
+	if (response.status >= 200 && response.status < 300) {
+		return Promise.resolve(response);
+	}
+	return Promise.reject(new Error(response.statusText));
 }
 
-const handlers = {};
+const cache = {};
 
-function request(type, url, data, fn) {
+function request(type, url, data) {
 	const handlerKey = type + ' ' + url;
 
-	if (handlerKey in handlers) {
-		handlers[handlerKey].push(fn || data);
-		return;
+	const clearCache = () => {
+		delete cache[handlerKey];
+	};
+
+	if (type !== 'post' && handlerKey in cache) {
+		return cache[handlerKey];
 	}
 
-	handlers[handlerKey] = [fn || data];
+	cache[handlerKey] = fetch('http://localhost:3000/' + url, {
+		method: type,
+		body: data ? JSON.stringify(data) : undefined,
+		cache: 'no-cache',
+		headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
+	})
+		.then(status).then(res => res.json())
+		.then(res => (clearCache(), res), err => { clearCache(); throw err; });
 
-	const requester = getRequester(type);
-
-	let agent = requester('http://localhost:3000/' + url);
-
-	agent.set('X-Requested-With', 'XMLHttpRequest');
-	agent.set('Expires', '-1');
-	agent.set('Cache-Control', 'no-cache,no-store,must-revalidate,max-age=-1,private');
-
-	if (typeof data === 'object') {
-		agent = agent.send(data);
-	}
-
-	agent.end((err, res) => {
-		handlers[handlerKey].forEach((handler) => {
-			handler.call(null, err, res);
-		});
-		delete handlers[handlerKey];
-	});
+	return cache[handlerKey];
 }
 
-export default function(type, url, data) {
-	return new Promise((resolve, reject) => {
-		request(type, url, data, (err, res) => {
-			err ? reject(err) : resolve(res.body);
-		});
-	});
-}
+export default request;

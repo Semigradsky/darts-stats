@@ -2,8 +2,10 @@ import React from 'react';
 import Formsy from 'formsy-react';
 import FRC from 'formsy-react-components';
 
-import UserActions from './Actions';
+import UserActions from 'components/users/Actions';
 import Loading from 'components/Loading';
+import { logError } from 'utils/log';
+import alert from 'utils/alert';
 
 const CreateUser = React.createClass({
 	getInitialState() {
@@ -12,9 +14,13 @@ const CreateUser = React.createClass({
 
 	onSubmit(data) {
 		this.setState({ dataSaved: false });
-		UserActions.create(data).then(id => {
-			UserActions.doLatest(id);
+		UserActions.create(data).then(res => {
+			UserActions.doLatest(res.id);
 			this.close();
+		}, err => {
+			this.setState({ dataSaved: true });
+			alert('User not created. Something wrong.');
+			logError(err);
 		});
 	},
 
