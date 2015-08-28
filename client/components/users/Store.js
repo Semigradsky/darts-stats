@@ -13,26 +13,24 @@ const CHANGE_EVENT = 'change';
 const cache = {};
 
 const UserStore = assign({}, EventEmitter.prototype, {
-	getAll() {
+	async getAll() {
 		if (cache.users) {
-			return Promise.resolve(cache.users);
+			return cache.users;
 		}
 
-		return request('get', 'users').then(res => {
-			cache.users = res;
-			return res;
-		});
+		const res = await request('get', 'users');
+		cache.users = res;
+		return res;
 	},
 
-	getLatest() {
+	async getLatest() {
 		if (cache.latestUsers) {
-			return Promise.resolve(cache.latestUsers);
+			return cache.latestUsers;
 		}
 
-		return UserStore.getAll().then(users => {
-			const latestUsers = JSON.parse(localStorage.getItem('latestUsers')) || [];
-			return latestUsers.map(id => find(users, { id })).filter(x => x);
-		});
+		const users = await UserStore.getAll();
+		const latestUsers = JSON.parse(localStorage.getItem('latestUsers')) || [];
+		return latestUsers.map(id => find(users, { id })).filter(x => x);
 	},
 
 	get(id) {
@@ -67,59 +65,59 @@ const updateLatestUsers = users => {
 
 const UserHandlers = {
 
-	[UserConstants.USER_CREATE](data) {
+	async [UserConstants.USER_CREATE](data) {
 		data.id = random.uuid();
-		return request('post', 'users/', data);
+		return await request('post', 'users/', data);
 	},
 
-	[UserConstants.USER_UPDATE](id, data) {
-		return request('put', 'users/' + id, data);
+	async [UserConstants.USER_UPDATE](id, data) {
+		return await request('put', 'users/' + id, data);
 	},
 
-	[UserConstants.USER_REMOVE](id) {
-		return request('delete', 'users/' + id);
+	async [UserConstants.USER_REMOVE](id) {
+		return await request('delete', 'users/' + id);
 	},
 
-	[UserConstants.USER_MOVE](from, to) {
-		return UserStore.getLatest().then(list => {
-			const newList = list.map(x => x.id);
-			arrange(newList, from, to);
-			return updateLatestUsers(newList);
-		});
+	async [UserConstants.USER_MOVE](from, to) {
+		let list = await UserStore.getLatest();
+		list = list.map(x => x.id);
+		arrange(list, from, to);
+		return updateLatestUsers(list);
 	},
 
-	[UserConstants.USER_DO_LATEST](id) {
-		return UserStore.getLatest().then(list => {
-			const newList = list.map(x => x.id);
+	async [UserConstants.USER_DO_LATEST](id) {
+		let list = await UserStore.getLatest();
+		list = list.map(x => x.id);
 
-			if (newList.indexOf(id) >= 0) {
-				return Promise.resolve();
-			}
+		if (list.indexOf(id) >= 0) {
+			return undefined;
+		}
 
-			newList.push(id);
-			return updateLatestUsers(newList);
-		});
+		list.push(id);
+		return updateLatestUsers(list);
 	},
 
-	[UserConstants.USER_DO_NOT_LATEST](id) {
-		return UserStore.getLatest().then(list => {
-			const newList = list.map(x => x.id);
+	async [UserConstants.USER_DO_NOT_LATEST](id) {
+		let list = await UserStore.getLatest();
+		list = list.map(x => x.id);
 
-			if (newList.indexOf(id) < 0) {
-				return Promise.resolve();
-			}
+		if (list.indexOf(id) < 0) {
+			return undefined;
+		}
 
-			return updateLatestUsers(newList.filter(x => x !== id));
-		});
+		return updateLatestUsers(list.filter(x => x !== id));
 	}
 
 };
 
-Dispatcher.register((action) => {
-	const promise = UserHandlers[action.actionType].apply(null, action.args);
-	action.next(promise.then(res => {
-		::UserStore.emitChange(); return res;
-	}));
+Dispatcher.register(async (action) => {
+	try {
+		const res = await UserHandlers[action.actionType].apply(null, action.args);
+		UserStore.emitChange();
+		action.resolve(res);
+	} catch (err) {
+		action.reject(err);
+	}
 });
 
 export default UserStore;

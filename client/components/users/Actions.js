@@ -4,13 +4,14 @@ import Dispatcher from 'utils/Dispatcher';
 import UserConstants from 'components/users/Constants';
 
 function makeAction(actionType) {
-	return function userAction() {
+	return async function userAction() {
 		const args = arguments;
-		return new Promise((resolve, reject) => {
+		return await new Promise((resolve, reject) => {
 			Dispatcher.dispatch({
 				actionType,
 				args,
-				next: x => x.then(resolve, reject)
+				resolve,
+				reject
 			});
 		});
 	};

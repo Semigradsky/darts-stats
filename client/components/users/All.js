@@ -10,10 +10,13 @@ const sortByScore = (x, y) => {
 };
 
 const AllUsers = React.createClass({
-	update() {
-		UserStore.getAll().then(data => {
+	async update() {
+		try {
+			const data = await UserStore.getAll();
 			this.setState({ users: data });
-		}, logError);
+		} catch(err) {
+			logError(err);
+		}
 	},
 
 	getInitialState() {
@@ -29,9 +32,13 @@ const AllUsers = React.createClass({
 		UserStore.removeChangeListener(this.update);
 	},
 
-	removeUser(id, event) {
+	async removeUser(id, event) {
 		event && event.preventDefault();
-		UserActions.remove(id);
+		try {
+			await UserActions.remove(id);
+		} catch(err) {
+			logError(err);
+		}
 	},
 
 	render() {

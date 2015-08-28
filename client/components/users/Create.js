@@ -12,16 +12,18 @@ const CreateUser = React.createClass({
 		return { dataSaved: true };
 	},
 
-	onSubmit(data) {
+	async onSubmit(data) {
 		this.setState({ dataSaved: false });
-		UserActions.create(data).then(res => {
-			UserActions.doLatest(res.id);
+
+		try {
+			const user = await UserActions.create(data);
+			await UserActions.doLatest(user.id);
 			this.close();
-		}, err => {
+		} catch (err) {
 			this.setState({ dataSaved: true });
 			alert('User not created. Something wrong.');
 			logError(err);
-		});
+		}
 	},
 
 	close() {

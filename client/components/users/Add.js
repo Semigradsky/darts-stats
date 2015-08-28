@@ -7,10 +7,13 @@ import find from 'utils/find';
 import { logError } from 'utils/log';
 
 const AddUser = React.createClass({
-	update() {
-		Promise.all([ UserStore.getAll(), UserStore.getLatest() ]).then(data => {
-			this.setState({ users: data[0].filter(x => !find(data[1], { id: x.id })) });
-		}, logError);
+	async update() {
+		try {
+			const [ users, latestUsers ] = await Promise.all([ UserStore.getAll(), UserStore.getLatest() ]);
+			this.setState({ users: users.filter(x => !find(latestUsers, { id: x.id })) });
+		} catch (err) {
+			logError(err);
+		}
 	},
 
 	getInitialState() {
@@ -26,15 +29,26 @@ const AddUser = React.createClass({
 		UserStore.removeChangeListener(this.update);
 	},
 
-	onSelect(user) {
-		UserActions.doLatest(user.id).then(null, logError);
+	async onSelect(user) {
+		try {
+			await UserActions.doLatest(user.id);
+		} catch (err) {
+			logError(err);
+		}
 		this.refs.typeahead.setEntryText('');
 	},
 
 	render() {
 		return (
 			<div>
-
+				<Typeahead
+					ref="typeahead"
+					options={this.state.users}
+					maxVisible={5}
+					filterOption="name"
+					displayOption="name"
+					onOptionSelected={this.onSelect}
+				/>
 			</div>
 		);
 	}

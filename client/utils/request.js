@@ -7,7 +7,7 @@ function status(response) {
 
 const cache = {};
 
-function request(type, url, data) {
+async function request(type, url, data) {
 	const handlerKey = type + ' ' + url;
 
 	const clearCache = () => {
@@ -15,7 +15,7 @@ function request(type, url, data) {
 	};
 
 	if (type !== 'post' && handlerKey in cache) {
-		return cache[handlerKey];
+		return await cache[handlerKey];
 	}
 
 	cache[handlerKey] = fetch('http://localhost:3000/' + url, {
@@ -27,7 +27,7 @@ function request(type, url, data) {
 		.then(status).then(res => res.json())
 		.then(res => (clearCache(), res), err => { clearCache(); throw err; });
 
-	return cache[handlerKey];
+	return await cache[handlerKey];
 }
 
 export default request;

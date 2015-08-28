@@ -13,10 +13,13 @@ import { logError } from 'utils/log';
 import './latest.less';
 
 const LatestUsers = React.createClass({
-	update() {
-		UserStore.getLatest().then(res => {
-			this.setState({ users: res.slice(), rearrangedUsers: res.slice() });
-		}, logError);
+	async update() {
+		try {
+			const users = await UserStore.getLatest();
+			this.setState({ users: users.slice(), rearrangedUsers: users.slice() });
+		} catch (err) {
+			logError(err);
+		}
 	},
 
 	getInitialState() {
@@ -32,10 +35,18 @@ const LatestUsers = React.createClass({
 		UserStore.removeChangeListener(this.update);
 	},
 
-	onMove(from) {
+	async onMove(from) {
 		const { users, rearrangedUsers } = this.state;
 		const to = users[findIndex(rearrangedUsers, { id: from })].id;
-		from !== to && UserActions.move(from, to);
+		if (from !== to) {
+			return;
+		}
+
+		try {
+			await UserActions.move(from, to);
+		} catch (err) {
+			logError(err);
+		}
 	},
 
 	onHover(from, to) {
@@ -50,9 +61,13 @@ const LatestUsers = React.createClass({
 		this.setState({ rearrangedUsers: this.state.users.slice() });
 	},
 
-	removeFromLatest(id, event) {
+	async removeFromLatest(id, event) {
 		event.preventDefault();
-		UserActions.doNotLatest(id).then(null, logError);
+		try {
+			await UserActions.doNotLatest(id);
+		} catch (err) {
+			logError(err);
+		}
 	},
 
 	render() {
