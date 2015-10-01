@@ -1,3 +1,5 @@
+import config from 'config';
+
 function status(response) {
 	if (response.status >= 200 && response.status < 300) {
 		return Promise.resolve(response);
@@ -18,7 +20,7 @@ async function request(type, url, data) {
 		return await cache[handlerKey];
 	}
 
-	cache[handlerKey] = fetch('http://localhost:3000/' + url, {
+	cache[handlerKey] = fetch(config.api + url, {
 		method: type,
 		body: data ? JSON.stringify(data) : undefined,
 		cache: 'no-cache',
