@@ -3,7 +3,7 @@ import { Typeahead } from 'react-typeahead';
 
 import UserStore from 'components/users/Store';
 import UserActions from 'components/users/Actions';
-import find from 'utils/find';
+import { find } from 'utils/collection';
 import { logError } from 'utils/log';
 
 const AddUser = React.createClass({

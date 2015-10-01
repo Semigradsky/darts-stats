@@ -16,8 +16,8 @@ const CreateUser = React.createClass({
 		this.setState({ dataSaved: false });
 
 		try {
-			const user = await UserActions.create(data);
-			await UserActions.doLatest(user.id);
+			const { id } = await UserActions.create(data);
+			await UserActions.doLatest(id);
 			this.close();
 		} catch (err) {
 			this.setState({ dataSaved: true });

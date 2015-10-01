@@ -4,9 +4,8 @@ import assign from 'react/lib/Object.assign';
 import random from 'utils/random';
 import Dispatcher from 'utils/Dispatcher';
 import request from 'utils/request';
-import UserConstants from 'components/users/Constants';
-import find from 'utils/find';
-import arrange from 'utils/arrange';
+import { actionNames as actions } from 'components/users/Actions';
+import { arrange, find } from 'utils/collection';
 
 const CHANGE_EVENT = 'change';
 
@@ -33,8 +32,8 @@ const UserStore = assign({}, EventEmitter.prototype, {
 		return latestUsers.map(id => find(users, { id })).filter(x => x);
 	},
 
-	get(id) {
-		return request('get', 'users/' + id);
+	async get(id) {
+		return await request('get', 'users/' + id);
 	},
 
 	emitChange() {
@@ -65,27 +64,27 @@ const updateLatestUsers = users => {
 
 const UserHandlers = {
 
-	async [UserConstants.USER_CREATE](data) {
+	async [actions.CREATE](data) {
 		data.id = random.uuid();
 		return await request('post', 'users/', data);
 	},
 
-	async [UserConstants.USER_UPDATE](id, data) {
+	async [actions.UPDATE](id, data) {
 		return await request('put', 'users/' + id, data);
 	},
 
-	async [UserConstants.USER_REMOVE](id) {
+	async [actions.REMOVE](id) {
 		return await request('delete', 'users/' + id);
 	},
 
-	async [UserConstants.USER_MOVE](from, to) {
+	async [actions.MOVE](from, to) {
 		let list = await UserStore.getLatest();
 		list = list.map(x => x.id);
 		arrange(list, from, to);
 		return updateLatestUsers(list);
 	},
 
-	async [UserConstants.USER_DO_LATEST](id) {
+	async [actions.DO_LATEST](id) {
 		let list = await UserStore.getLatest();
 		list = list.map(x => x.id);
 
@@ -97,7 +96,7 @@ const UserHandlers = {
 		return updateLatestUsers(list);
 	},
 
-	async [UserConstants.USER_DO_NOT_LATEST](id) {
+	async [actions.DO_NOT_LATEST](id) {
 		let list = await UserStore.getLatest();
 		list = list.map(x => x.id);
 
@@ -111,6 +110,10 @@ const UserHandlers = {
 };
 
 Dispatcher.register(async (action) => {
+	if (!(action.actionType in UserHandlers)) {
+		return;
+	}
+
 	try {
 		const res = await UserHandlers[action.actionType].apply(null, action.args);
 		UserStore.emitChange();
