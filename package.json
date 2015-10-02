@@ -4,10 +4,9 @@
   "description": "Darts stats (client)",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server",
+    "start": "node devServer.js",
     "lint": "eslint client",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "json-server --watch db.json"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -43,20 +42,26 @@
     "babel-core": "^5.8.22",
     "babel-eslint": "^4.0.5",
     "babel-loader": "^5.3.2",
+    "babel-plugin-react-transform": "^1.1.1",
     "css-loader": "^0.16.0",
     "eslint": "^1.1.0",
     "eslint-config-airbnb": "0.0.7",
     "eslint-loader": "^1.0.0",
     "eslint-plugin-react": "^3.2.2",
     "exports-loader": "^0.6.2",
+    "express": "^4.13.3",
     "file-loader": "^0.8.4",
     "imports-loader": "^0.6.4",
     "less": "^2.5.1",
     "less-loader": "^2.2.0",
-    "react-hot-loader": "^1.2.8",
+    "react-transform-catch-errors": "^1.0.0",
+    "react-transform-hmr": "^1.0.1",
+    "redbox-react": "^1.1.1",
+    "serve-favicon": "^2.3.0",
     "style-loader": "^0.12.3",
     "url-loader": "^0.5.6",
     "webpack": "^1.11.0",
-    "webpack-dev-server": "^1.10.1"
+    "webpack-dev-middleware": "^1.2.0",
+    "webpack-hot-middleware": "^2.3.0"
   }
 }

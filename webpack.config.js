@@ -2,15 +2,16 @@ var webpack = require('webpack');
 var path = require('path');
 
 var config = {
-	context: path.join(__dirname, 'client'),
+	//context: path.join(__dirname, 'client'),
 	entry: [
-		'webpack/hot/only-dev-server',
-		'./main.js'
+		'webpack-hot-middleware/client',
+		'./client/main.js'
 	],
 
 	output: {
-		path: 'client',
-		filename: 'bundle.js'
+		path: path.join(__dirname, 'dist'),
+		filename: 'bundle.js',
+		publicPath: '/static/'
 	},
 
 	cache: true,
@@ -29,7 +30,7 @@ var config = {
 
 	module: {
 		loaders: [
-			{ test: /\.js$/, loaders: ['react-hot', 'babel?optional[]=runtime&stage=0'], exclude: /node_modules/ },
+			{ test: /\.js$/, loaders: ['babel'], exclude: /node_modules/ },
 			{ test: /\.json$/, loader: 'json' },
 			{ test: /\.css$/, loader: 'style!css' },
 			{ test: /\.less$/, loader: 'style!css!less' },
