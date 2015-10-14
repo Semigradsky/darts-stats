@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events';
-import assign from 'react/lib/Object.assign';
 
 import random from 'utils/random';
 import Dispatcher from 'utils/Dispatcher';
@@ -10,7 +9,7 @@ const CHANGE_EVENT = 'change';
 
 const cache = {};
 
-const GameStore = assign({}, EventEmitter.prototype, {
+const GameStore = Object.assign({}, EventEmitter.prototype, {
 	async getAll() {
 		if (cache.games) {
 			return cache.games;

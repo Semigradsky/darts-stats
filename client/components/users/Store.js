@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events';
-import assign from 'react/lib/Object.assign';
 
 import random from 'utils/random';
 import Dispatcher from 'utils/Dispatcher';
@@ -11,7 +10,7 @@ const CHANGE_EVENT = 'change';
 
 const cache = {};
 
-const UserStore = assign({}, EventEmitter.prototype, {
+const UserStore = Object.assign({}, EventEmitter.prototype, {
 	async getAll() {
 		if (cache.users) {
 			return cache.users;
