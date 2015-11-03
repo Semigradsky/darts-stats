@@ -9,4 +9,4 @@ export const actionNames = {
 	'DO_NOT_LATEST': Symbol()
 };
 
-export default createActions(actionNames);
+export default createActions(actionNames, 'Users');

@@ -6,4 +6,4 @@ export const actionNames = {
 	'UPDATE': Symbol()
 };
 
-export default createActions(actionNames);
+export default createActions(actionNames, 'Games');
