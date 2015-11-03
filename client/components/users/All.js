@@ -2,7 +2,7 @@ import React from 'react';
 
 import UserStore from 'components/users/Store';
 import UserActions from 'components/users/Actions';
-import User from 'components/users/User';
+import { User } from 'components/users';
 import { logError } from 'utils/log';
 
 const sortByScore = (x, y) => {

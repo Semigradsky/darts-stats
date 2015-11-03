@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.css';
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Router from 'react-router';
 import RedBox from 'redbox-react';
 
@@ -11,8 +12,8 @@ const root = document.getElementById('root');
 
 Router.run(routes, Router.HashLocation, (Handler) => {
 	try {
-		React.render(<Handler/>, root);
+		ReactDOM.render(<Handler/>, root);
 	} catch (err) {
-		React.render(<RedBox error={err} />, root);
+		ReactDOM.render(<RedBox error={err} />, root);
 	}
 });

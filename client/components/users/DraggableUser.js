@@ -1,7 +1,7 @@
 import React from 'react';
 import { DragSource, DropTarget } from 'react-dnd';
 
-import User from 'components/users/User';
+import { User } from 'components/users';
 
 const userSource = {
 	beginDrag(props) {
@@ -37,7 +37,7 @@ const userTarget = {
 	connectDragSource: connect.dragSource(),
 	isDragging: monitor.isDragging()
 }))
-class DraggableUser {
+class DraggableUser extends React.Component {
 	render() {
 		const { isDragging, connectDragSource, connectDropTarget } = this.props;
 		return connectDragSource(connectDropTarget(

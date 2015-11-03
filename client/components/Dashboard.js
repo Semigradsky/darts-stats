@@ -1,10 +1,13 @@
 import React from 'react';
 
 import Modal from 'components/popups/Modal';
-import LatestUsers from 'components/users/Latest';
-import AddUser from 'components/users/Add';
-import CreateUser from 'components/users/Create';
-import AllUsers from 'components/users/All';
+
+import {
+	AddUser,
+	AllUsers,
+	CreateUser,
+	LatestUsersContainer
+} from 'components/users';
 
 const Dashboard = React.createClass({
 	getInitialState() {
@@ -28,7 +31,7 @@ const Dashboard = React.createClass({
 
 		return (
 			<div>
-				<LatestUsers />
+				<LatestUsersContainer />
 				<AddUser />
 				<button onClick={this.openCreateUser}>
 					Create new

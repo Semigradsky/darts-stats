@@ -1,19 +1,19 @@
 import React from 'react';
 import { Navigation } from 'react-router';
 import { DragDropContext } from 'react-dnd';
-import HTML5Backend from 'react-dnd/modules/backends/HTML5';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 import UserStore from 'components/users/Store';
 import GameStore from 'components/games/Store';
 import UserActions from 'components/users/Actions';
 import GameActions from 'components/games/Actions';
-import DraggableUser from 'components/users/DraggableUser';
+import { LatestUsers } from 'components/users';
 import { arrange, find, findIndex } from 'utils/collection';
 import { logError } from 'utils/log';
 
 import './latest.less';
 
-const LatestUsers = React.createClass({
+const LatestUsersContainer = React.createClass({
 	mixins: [ Navigation ],
 
 	async update() {
@@ -85,23 +85,21 @@ const LatestUsers = React.createClass({
 	render() {
 		return (
 			<div>
-				<ul className="latest-users">
-					{this.state.rearrangedUsers.map(user => (
-						<li key={user.id} className="latest-user">
-							<DraggableUser {...user}
-								isLatest={true}
-								onMove={this.onMove}
-								onHover={this.onHover}
-								revert={this.revert}
-							/>
-							<a href="#" onClick={this.removeFromLatest.bind(null, user.id)} className="remove fa fa-remove"></a>
-						</li>
-					))}
-				</ul>
-				{this.state.users.length >= 2 ? <button onClick={this.startGame}>Start Game!</button> : null}
+				<LatestUsers
+					users={this.state.rearrangedUsers}
+					onMove={this.onMove}
+					onHover={this.onHover}
+					revert = {this.revert}
+					removeFromLatest = {this.removeFromLatest}
+				/>
+				{
+					this.state.users.length >= 2 ?
+						<button onClick={this.startGame}>Start Game!</button> :
+						null
+				}
 			</div>
 		);
 	}
 });
 
-export default DragDropContext(HTML5Backend)(LatestUsers);
+export default DragDropContext(HTML5Backend)(LatestUsersContainer);
