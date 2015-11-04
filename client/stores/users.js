@@ -1,16 +1,16 @@
 import { EventEmitter } from 'events';
 
 import random from 'utils/random';
-import Dispatcher from 'utils/Dispatcher';
 import request from 'utils/request';
-import { actionNames as actions } from 'components/users/Actions';
+import after from 'utils/afterDecorator';
+import { actionNames as actions } from 'actions/users';
 import { arrange, find } from 'utils/collection';
 
 const CHANGE_EVENT = 'change';
 
 const cache = {};
 
-const UserStore = Object.assign({}, EventEmitter.prototype, {
+const UsersStore = Object.assign({}, EventEmitter.prototype, {
 	async getAll() {
 		if (cache.users) {
 			return cache.users;
@@ -26,7 +26,7 @@ const UserStore = Object.assign({}, EventEmitter.prototype, {
 			return cache.latestUsers;
 		}
 
-		const users = await UserStore.getAll();
+		const users = await UsersStore.getAll();
 		const latestUsers = JSON.parse(localStorage.getItem('latestUsers')) || [];
 		return latestUsers.map(id => find(users, { id })).filter(x => x);
 	},
@@ -50,7 +50,7 @@ const UserStore = Object.assign({}, EventEmitter.prototype, {
 	}
 });
 
-const updateLatestUsers = users => {
+function updateLatestUsers(users) {
 	return new Promise((resolve, reject) => {
 		try {
 			localStorage.setItem('latestUsers', JSON.stringify(users));
@@ -59,32 +59,37 @@ const updateLatestUsers = users => {
 			reject(e);
 		}
 	});
-};
+}
 
-const UserHandlers = {
+export const UsersHandlers = {
 
+	@after(::UsersStore.emitChange)
 	async [actions.CREATE](data) {
 		data.id = random.uuid();
 		return await request('post', 'users/', data);
 	},
 
+	@after(::UsersStore.emitChange)
 	async [actions.UPDATE](id, data) {
 		return await request('put', 'users/' + id, data);
 	},
 
+	@after(::UsersStore.emitChange)
 	async [actions.REMOVE](id) {
 		return await request('delete', 'users/' + id);
 	},
 
+	@after(::UsersStore.emitChange)
 	async [actions.MOVE](from, to) {
-		let list = await UserStore.getLatest();
+		let list = await UsersStore.getLatest();
 		list = list.map(x => x.id);
 		arrange(list, from, to);
 		return updateLatestUsers(list);
 	},
 
+	@after(::UsersStore.emitChange)
 	async [actions.DO_LATEST](id) {
-		let list = await UserStore.getLatest();
+		let list = await UsersStore.getLatest();
 		list = list.map(x => x.id);
 
 		if (list.indexOf(id) >= 0) {
@@ -95,8 +100,9 @@ const UserHandlers = {
 		return updateLatestUsers(list);
 	},
 
+	@after(::UsersStore.emitChange)
 	async [actions.DO_NOT_LATEST](id) {
-		let list = await UserStore.getLatest();
+		let list = await UsersStore.getLatest();
 		list = list.map(x => x.id);
 
 		if (list.indexOf(id) < 0) {
@@ -108,18 +114,4 @@ const UserHandlers = {
 
 };
 
-Dispatcher.register(async (action) => {
-	if (!(action.actionType in UserHandlers)) {
-		return;
-	}
-
-	try {
-		const res = await UserHandlers[action.actionType].apply(null, action.args);
-		UserStore.emitChange();
-		action.resolve(res);
-	} catch (err) {
-		action.reject(err);
-	}
-});
-
-export default UserStore;
+export default UsersStore;

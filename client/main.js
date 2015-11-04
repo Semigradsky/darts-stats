@@ -6,11 +6,18 @@ import ReactDOM from 'react-dom';
 import Router from 'react-router';
 import RedBox from 'redbox-react';
 
+import Dispatcher from './Dispatcher';
 import routes from './routes';
 
 const root = document.getElementById('root');
 
-Router.run(routes, Router.HashLocation, (Handler) => {
+function runApp(done) {
+	Dispatcher.run(() => {
+		Router.run(routes, Router.HashLocation, done);
+	});
+}
+
+runApp(Handler => {
 	try {
 		ReactDOM.render(<Handler/>, root);
 	} catch (err) {

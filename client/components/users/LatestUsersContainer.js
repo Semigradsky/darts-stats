@@ -3,10 +3,8 @@ import { Navigation } from 'react-router';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
-import UserStore from 'components/users/Store';
-import GameStore from 'components/games/Store';
-import UserActions from 'components/users/Actions';
-import GameActions from 'components/games/Actions';
+import { UsersStore } from 'stores';
+import { GamesActions, UsersActions } from 'actions';
 import { LatestUsers } from 'components/users';
 import { arrange, find, findIndex } from 'utils/collection';
 import { logError } from 'utils/log';
@@ -18,7 +16,7 @@ const LatestUsersContainer = React.createClass({
 
 	async update() {
 		try {
-			const users = await UserStore.getLatest();
+			const users = await UsersStore.getLatest();
 			this.setState({ users: users.slice(), rearrangedUsers: users.slice() });
 		} catch (err) {
 			logError(err);
@@ -31,11 +29,11 @@ const LatestUsersContainer = React.createClass({
 
 	componentDidMount() {
 		this.update();
-		UserStore.addChangeListener(this.update);
+		UsersStore.addChangeListener(this.update);
 	},
 
 	componentWillUnmount() {
-		UserStore.removeChangeListener(this.update);
+		UsersStore.removeChangeListener(this.update);
 	},
 
 	async onMove(from) {
@@ -46,7 +44,7 @@ const LatestUsersContainer = React.createClass({
 		}
 
 		try {
-			await UserActions.move(from, to);
+			await UsersActions.move(from, to);
 		} catch (err) {
 			logError(err);
 		}
@@ -67,7 +65,7 @@ const LatestUsersContainer = React.createClass({
 	async removeFromLatest(id, event) {
 		event.preventDefault();
 		try {
-			await UserActions.doNotLatest(id);
+			await UsersActions.doNotLatest(id);
 		} catch (err) {
 			logError(err);
 		}
@@ -75,7 +73,7 @@ const LatestUsersContainer = React.createClass({
 
 	async startGame() {
 		try {
-			const { id } = await GameActions.create(this.state.users.map(x => x.id));
+			const { id } = await GamesActions.create(this.state.users.map(x => x.id));
 			this.transitionTo('game', id);
 		} catch (err) {
 			logError(err);

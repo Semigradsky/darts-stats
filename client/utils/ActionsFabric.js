@@ -1,4 +1,4 @@
-import Dispatcher from 'utils/Dispatcher';
+import Dispatcher from 'Dispatcher';
 import { toCamelCase } from 'utils/string';
 
 function makeAction(actionType, actionName, type) {

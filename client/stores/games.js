@@ -1,15 +1,15 @@
 import { EventEmitter } from 'events';
 
 import random from 'utils/random';
-import Dispatcher from 'utils/Dispatcher';
 import request from 'utils/request';
-import { actionNames as actions } from 'components/games/Actions';
+import after from 'utils/afterDecorator';
+import { actionNames as actions } from 'actions/games';
 
 const CHANGE_EVENT = 'change';
 
 const cache = {};
 
-const GameStore = Object.assign({}, EventEmitter.prototype, {
+const GamesStore = Object.assign({}, EventEmitter.prototype, {
 	async getAll() {
 		if (cache.games) {
 			return cache.games;
@@ -38,8 +38,9 @@ const GameStore = Object.assign({}, EventEmitter.prototype, {
 	}
 });
 
-const GameHandlers = {
+export const GamesHandlers = {
 
+	@after(::GamesStore.emitChange)
 	async [actions.CREATE](data) {
 		const game = {
 			id: random.uuid(),
@@ -49,28 +50,16 @@ const GameHandlers = {
 		return await request('post', 'games/', game);
 	},
 
+	@after(::GamesStore.emitChange)
 	async [actions.UPDATE](id, data) {
 		return await request('put', 'games/' + id, data);
 	},
 
+	@after(::GamesStore.emitChange)
 	async [actions.REMOVE](id) {
 		return await request('delete', 'games/' + id);
 	}
 
 };
 
-Dispatcher.register(async (action) => {
-	if (!(action.actionType in GameHandlers)) {
-		return;
-	}
-
-	try {
-		const res = await GameHandlers[action.actionType].apply(null, action.args);
-		GameStore.emitChange();
-		action.resolve(res);
-	} catch (err) {
-		action.reject(err);
-	}
-});
-
-export default GameStore;
+export default GamesStore;

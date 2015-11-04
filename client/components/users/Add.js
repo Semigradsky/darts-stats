@@ -1,15 +1,15 @@
 import React from 'react';
 import { Typeahead } from 'react-typeahead';
 
-import UserStore from 'components/users/Store';
-import UserActions from 'components/users/Actions';
+import { UsersStore } from 'stores';
+import { UsersActions } from 'actions';
 import { find } from 'utils/collection';
 import { logError } from 'utils/log';
 
 const AddUser = React.createClass({
 	async update() {
 		try {
-			const [ users, latestUsers ] = await Promise.all([ UserStore.getAll(), UserStore.getLatest() ]);
+			const [ users, latestUsers ] = await Promise.all([ UsersStore.getAll(), UsersStore.getLatest() ]);
 			this.setState({ users: users.filter(x => !find(latestUsers, { id: x.id })) });
 		} catch (err) {
 			logError(err);
@@ -22,16 +22,16 @@ const AddUser = React.createClass({
 
 	componentDidMount() {
 		this.update();
-		UserStore.addChangeListener(this.update);
+		UsersStore.addChangeListener(this.update);
 	},
 
 	componentWillUnmount() {
-		UserStore.removeChangeListener(this.update);
+		UsersStore.removeChangeListener(this.update);
 	},
 
 	async onSelect(user) {
 		try {
-			await UserActions.doLatest(user.id);
+			await UsersActions.doLatest(user.id);
 		} catch (err) {
 			logError(err);
 		}

@@ -2,7 +2,7 @@ import React from 'react';
 import Formsy from 'formsy-react';
 import FRC from 'formsy-react-components';
 
-import UserActions from 'components/users/Actions';
+import { UsersActions } from 'actions';
 import Loading from 'components/Loading';
 import { logError } from 'utils/log';
 import alert from 'utils/alert';
@@ -16,8 +16,8 @@ const CreateUser = React.createClass({
 		this.setState({ dataSaved: false });
 
 		try {
-			const { id } = await UserActions.create(data);
-			await UserActions.doLatest(id);
+			const { id } = await UsersActions.create(data);
+			await UsersActions.doLatest(id);
 			this.close();
 		} catch (err) {
 			this.setState({ dataSaved: true });
