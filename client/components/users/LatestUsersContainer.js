@@ -39,7 +39,7 @@ const LatestUsersContainer = React.createClass({
 	async onMove(from) {
 		const { users, rearrangedUsers } = this.state;
 		const to = users[findIndex(rearrangedUsers, { id: from })].id;
-		if (from !== to) {
+		if (from === to) {
 			return;
 		}
 
@@ -74,7 +74,7 @@ const LatestUsersContainer = React.createClass({
 	async startGame() {
 		try {
 			const { id } = await GamesActions.create(this.state.users.map(x => x.id));
-			this.transitionTo('game', id);
+			this.transitionTo('game', { gameId: id });
 		} catch (err) {
 			logError(err);
 		}

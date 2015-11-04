@@ -7,7 +7,7 @@ npm install
 npm start
 ```
 
-and open `http://localhost:8080/webpack-dev-server/bundle`
+and open `http://localhost:3000`
 
 ## Dependencies [![Dependency Status](https://david-dm.org/semigradsky/darts-stats.svg)](https://david-dm.org/semigradsky/darts-stats)
 
