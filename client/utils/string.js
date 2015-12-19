@@ -1,8 +1,8 @@
-function capitalizeFirstLetter(string) {
+export function capitalizeFirstLetter(string) {
 	return string.charAt(0).toLocaleUpperCase() + string.slice(1).toLocaleLowerCase();
 }
 
-function toCamelCase(string) {
+export function toCamelCase(string) {
 	const [firstWord, ...anothers] = string.split('_');
 	return firstWord.toLocaleLowerCase() + anothers.map(capitalizeFirstLetter).join('');
 }

@@ -1,17 +1,26 @@
 {
   "users": [
     {
-      "name": "user 04",
-      "id": "fb5476be-9f5b-4bfe-8fd8-de17d1f7682b"
-    },
-    {
-      "name": "user 05",
-      "id": "94e84f7c-f4e4-46c5-977c-b90a10c9b412"
-    },
-    {
       "name": "user 06",
       "id": "7989c310-b6e6-4bc6-9845-9b2f3e47b635"
+    },
+    {
+      "name": "user 01",
+      "id": "be3e0c96-3c25-45ff-aca4-5adca197f002"
+    },
+    {
+      "name": "user 02",
+      "id": "ed25e0f8-3e87-43c6-b9b3-6da887fd3338"
     }
   ],
-  "games": []
+  "games": [
+    {
+      "id": "c2133ac6-330b-41b7-9253-c839784ac857",
+      "players": [
+        "be3e0c96-3c25-45ff-aca4-5adca197f002",
+        "ed25e0f8-3e87-43c6-b9b3-6da887fd3338"
+      ],
+      "state": "IN PROGRESS"
+    }
+  ]
 }

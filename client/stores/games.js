@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 
 import random from 'utils/random';
 import request from 'utils/request';
-import after from 'utils/afterDecorator';
 import { actionNames as actions } from 'actions/games';
 
 const CHANGE_EVENT = 'change';
@@ -40,7 +39,6 @@ const GamesStore = Object.assign({}, EventEmitter.prototype, {
 
 export const GamesHandlers = {
 
-	@after(::GamesStore.emitChange)
 	async [actions.CREATE](data) {
 		const game = {
 			id: random.uuid(),
@@ -50,12 +48,10 @@ export const GamesHandlers = {
 		return await request('post', 'games/', game);
 	},
 
-	@after(::GamesStore.emitChange)
 	async [actions.UPDATE](id, data) {
 		return await request('put', 'games/' + id, data);
 	},
 
-	@after(::GamesStore.emitChange)
 	async [actions.REMOVE](id) {
 		return await request('delete', 'games/' + id);
 	}

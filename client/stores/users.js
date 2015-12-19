@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 
 import random from 'utils/random';
 import request from 'utils/request';
-import after from 'utils/afterDecorator';
 import { actionNames as actions } from 'actions/users';
 import { arrange, find } from 'utils/collection';
 
@@ -63,23 +62,19 @@ function updateLatestUsers(users) {
 
 export const UsersHandlers = {
 
-	@after(::UsersStore.emitChange)
 	async [actions.CREATE](data) {
 		data.id = random.uuid();
 		return await request('post', 'users/', data);
 	},
 
-	@after(::UsersStore.emitChange)
 	async [actions.UPDATE](id, data) {
 		return await request('put', 'users/' + id, data);
 	},
 
-	@after(::UsersStore.emitChange)
 	async [actions.REMOVE](id) {
 		return await request('delete', 'users/' + id);
 	},
 
-	@after(::UsersStore.emitChange)
 	async [actions.MOVE](from, to) {
 		let list = await UsersStore.getLatest();
 		list = list.map(x => x.id);
@@ -87,7 +82,6 @@ export const UsersHandlers = {
 		return updateLatestUsers(list);
 	},
 
-	@after(::UsersStore.emitChange)
 	async [actions.DO_LATEST](id) {
 		let list = await UsersStore.getLatest();
 		list = list.map(x => x.id);
@@ -100,7 +94,6 @@ export const UsersHandlers = {
 		return updateLatestUsers(list);
 	},
 
-	@after(::UsersStore.emitChange)
 	async [actions.DO_NOT_LATEST](id) {
 		let list = await UsersStore.getLatest();
 		list = list.map(x => x.id);
