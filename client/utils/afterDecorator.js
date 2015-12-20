@@ -1,4 +1,4 @@
-export default function(...funcs) {
+export default function (...funcs) {
 	return (target, key, descriptor) => {
 		if (typeof descriptor.value !== 'function') {
 			throw new SyntaxError();

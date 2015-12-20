@@ -14,7 +14,7 @@ const AllUsers = React.createClass({
 		try {
 			const data = await UsersStore.getAll();
 			this.setState({ users: data });
-		} catch(err) {
+		} catch (err) {
 			logError(err);
 		}
 	},
@@ -36,7 +36,7 @@ const AllUsers = React.createClass({
 		event && event.preventDefault();
 		try {
 			await UsersActions.remove(id);
-		} catch(err) {
+		} catch (err) {
 			logError(err);
 		}
 	},
@@ -47,7 +47,7 @@ const AllUsers = React.createClass({
 				{this.state.users.sort(sortByScore).map(user => (
 					<li key={user.id}>
 						<User {...user} />
-						<a href="" style={{color: 'red'}} onClick={this.removeUser.bind(this, user.id)} className="remove fa fa-trash">Remove</a>
+						<a href="" style={{ color: 'red' }} onClick={this.removeUser.bind(this, user.id)} className="remove fa fa-trash">Remove</a>
 					</li>
 				))}
 			</ul>

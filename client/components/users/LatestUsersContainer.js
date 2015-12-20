@@ -12,7 +12,7 @@ import { logError } from 'utils/log';
 import './latest.less';
 
 const LatestUsersContainer = React.createClass({
-	mixins: [ Navigation ],
+	mixins: [Navigation],
 
 	async update() {
 		try {

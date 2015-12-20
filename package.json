@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/Semigradsky/darts-stats",
   "dependencies": {
-    "babel-runtime": "^5.8.20",
+    "babel-runtime": "^5.8.34",
     "bootstrap": "^3.3.5",
     "flux": "^2.1.1",
     "font-awesome": "^4.5.0",
@@ -51,7 +51,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "css-loader": "^0.23.0",
     "eslint": "^1.10.3",
-    "eslint-config-airbnb": "0.0.7",
+    "eslint-config-airbnb": "^2.1.1",
     "eslint-loader": "^1.1.1",
     "eslint-plugin-react": "^3.11.3",
     "exports-loader": "^0.6.2",

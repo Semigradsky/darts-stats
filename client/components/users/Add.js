@@ -9,7 +9,7 @@ import { logError } from 'utils/log';
 const AddUser = React.createClass({
 	async update() {
 		try {
-			const [ users, latestUsers ] = await Promise.all([ UsersStore.getAll(), UsersStore.getLatest() ]);
+			const [users, latestUsers] = await Promise.all([UsersStore.getAll(), UsersStore.getLatest()]);
 			this.setState({ users: users.filter(x => !find(latestUsers, { id: x.id })) });
 		} catch (err) {
 			logError(err);

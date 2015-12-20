@@ -24,7 +24,7 @@ async function request(type, url, data) {
 		method: type,
 		body: data ? JSON.stringify(data) : undefined,
 		cache: 'no-cache',
-		headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}
+		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
 	})
 		.then(status).then(res => res.json())
 		.then(res => (clearCache(), res), err => { clearCache(); throw err; });

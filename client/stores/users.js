@@ -54,7 +54,7 @@ function updateLatestUsers(users) {
 		try {
 			localStorage.setItem('latestUsers', JSON.stringify(users));
 			resolve();
-		} catch(e) {
+		} catch (e) {
 			reject(e);
 		}
 	});
