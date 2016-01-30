@@ -43,7 +43,8 @@ export const GamesHandlers = {
 		const game = {
 			id: random.uuid(),
 			players: data,
-			state: 'IN PROGRESS'
+			state: 'IN PROGRESS',
+			rounds: []
 		};
 		return await request('post', 'games/', game);
 	},

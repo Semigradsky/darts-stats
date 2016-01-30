@@ -9,6 +9,8 @@ var app = jsonServer.create();
 var compiler = webpack(config);
 var router = jsonServer.router('db.json');
 
+var port = 3000;
+
 app.use(require('webpack-dev-middleware')(compiler, {
 	noInfo: true,
 	publicPath: config.output.publicPath
@@ -23,4 +25,6 @@ app.get('/', function(req, res) {
 });
 
 app.use('/api', router);
-app.listen(3000);
+app.listen(port);
+
+console.log('Now just open http://localhost:' + port);

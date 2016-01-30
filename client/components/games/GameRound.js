@@ -6,10 +6,10 @@ const GameRound = React.createClass({
 
 	render() {
 		return (
-			<div>
+			<div className="game-round">
 				{
 					this.props.throws.map((playerThrows, pos) => (
-						<PlayerThrows key={pos} throws={playerThrows} />
+						<PlayerThrows key={pos+playerThrows} throws={playerThrows} update={this.props.update.bind(null, this.props.round, pos)} />
 					))
 				}
 			</div>

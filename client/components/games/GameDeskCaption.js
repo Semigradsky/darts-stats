@@ -19,7 +19,7 @@ const GameDeskCaption = React.createClass({
 
 	render() {
 		return (
-			<div>
+			<div className="game-players">
 				{
 					this.state.players.map((user, pos) => (
 						<div key={pos}>
