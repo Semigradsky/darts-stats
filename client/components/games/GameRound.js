@@ -9,7 +9,11 @@ const GameRound = React.createClass({
 			<div className="game-round">
 				{
 					this.props.throws.map((playerThrows, pos) => (
-						<PlayerThrows key={pos+playerThrows} throws={playerThrows} update={this.props.update.bind(null, this.props.round, pos)} />
+						<PlayerThrows
+							key={pos + playerThrows}
+							throws={playerThrows}
+							update={this.props.update.bind(null, this.props.round, pos)}
+						/>
 					))
 				}
 			</div>
