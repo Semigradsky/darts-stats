@@ -1,24 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import keycode from 'keycode';
+
 import './playerThrows.less';
 
-const NUMBER_KEYCODES = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
-const MOTION_KEYCODES = [
-	37 /* ArrowLeft */,
-	36 /* Home */,
-	39 /* ArrowRight */,
-	35 /* End */,
-	9  /* Tab */
-];
-const AVAILABLE_KEYCODES = [].concat(
-	NUMBER_KEYCODES,
-	MOTION_KEYCODES,
-	187 /* + */,
-	13  /* Enter */,
-	8   /* Backspace */,
-	46  /* Delete */,
-	27  /* Escape */
+const NUMBER_KEYS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const MOTION_KEYS = ['left', 'home', 'right', 'end', 'tab'];
+const AVAILABLE_KEYS = [].concat(
+	NUMBER_KEYS,
+	MOTION_KEYS,
+	'=',
+	'enter',
+	'backspace',
+	'delete',
+	'escape'
 );
 
 const PlayerThrows = React.createClass({
@@ -45,16 +41,26 @@ const PlayerThrows = React.createClass({
 	},
 
 	onKeyDown(event) {
-		if (!AVAILABLE_KEYCODES.includes(event.keyCode)) {
+		const keyName = keycode(event);
+
+		if (!AVAILABLE_KEYS.includes(keyName)) {
 			return event.preventDefault();
 		}
 
-		if (event.keyCode === 27 /* Escape */) {
+		if (keyName === '=' && !event.shiftKey) {
+			return event.preventDefault();
+		}
+
+		if (keyName === 'esc') {
 			return this.stopEditing();
 		}
 
-		if (event.keyCode === 13 /* Enter */) {
-			this.props.update(event.target.value);
+		if (keyName === 'enter') {
+			let value = event.target.value;
+			value = value.replace(/\+\++/g, '+');
+			value = value.replace(/^\++/, '');
+			value = value.replace(/\++$/, '');
+			this.props.update(value);
 			this.stopEditing();
 		}
 	},

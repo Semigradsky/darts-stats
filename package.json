@@ -30,6 +30,7 @@
     "formsy-react": "^0.17.0",
     "formsy-react-components": "^0.6.3",
     "json-server": "^0.8.4",
+    "keycode": "^2.1.1",
     "react": "^0.14.3",
     "react-dnd": "^2.0.2",
     "react-dnd-html5-backend": "^2.0.0",
