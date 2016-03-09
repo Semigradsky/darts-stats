@@ -14,7 +14,7 @@ const AVAILABLE_KEYS = [].concat(
 	'enter',
 	'backspace',
 	'delete',
-	'escape'
+	'esc'
 );
 
 const PlayerThrows = React.createClass({
