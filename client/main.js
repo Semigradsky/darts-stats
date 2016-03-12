@@ -3,7 +3,7 @@ import 'font-awesome/css/font-awesome.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Router from 'react-router';
+import { Router, hashHistory } from 'react-router';
 import RedBox from 'redbox-react';
 
 import Dispatcher from './Dispatcher';
@@ -12,14 +12,12 @@ import routes from './routes';
 const root = document.getElementById('root');
 
 function runApp(done) {
-	Dispatcher.run(() => {
-		Router.run(routes, Router.HashLocation, done);
-	});
+	Dispatcher.run(done);
 }
 
-runApp(Handler => {
+runApp(() => {
 	try {
-		ReactDOM.render(<Handler/>, root);
+		ReactDOM.render(<Router history={hashHistory} routes={routes} />, root);
 	} catch (err) {
 		ReactDOM.render(<RedBox error={err} />, root);
 	}

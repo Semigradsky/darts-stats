@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigation } from 'react-router';
+import { browserHistory } from 'react-router';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
@@ -12,7 +12,6 @@ import { logError } from 'utils/log';
 import './latest.less';
 
 const LatestUsersContainer = React.createClass({
-	mixins: [Navigation],
 
 	async update() {
 		try {
@@ -74,7 +73,7 @@ const LatestUsersContainer = React.createClass({
 	async startGame() {
 		try {
 			const { id } = await GamesActions.create(this.state.users.map(x => x.id));
-			this.transitionTo('game', { gameId: id });
+			browserHistory.push(`/game/${id}`);
 		} catch (err) {
 			logError(err);
 		}

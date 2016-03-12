@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { IndexLink } from 'react-router';
 
 const NotFound = React.createClass({
 	render() {
@@ -8,7 +8,7 @@ const NotFound = React.createClass({
 			<div>
 				<h1>Ooops... Page not found!</h1>
 				<p>
-					Go back to <Link to="dashboard">dashboard</Link>
+					Go back to <IndexLink to="/">dashboard</IndexLink>
 					&nbsp;or onward to <a href={repoUrl}>source</a>
 				</p>
 			</div>
