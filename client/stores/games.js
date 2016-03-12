@@ -20,7 +20,7 @@ const GamesStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	async get(id) {
-		return await request('get', 'games/' + id);
+		return await request('get', `games/${id}`);
 	},
 
 	emitChange() {
@@ -50,11 +50,11 @@ export const GamesHandlers = {
 	},
 
 	async [actions.UPDATE](id, data) {
-		return await request('put', 'games/' + id, data);
+		return await request('put', `games/${id}`, data);
 	},
 
 	async [actions.REMOVE](id) {
-		return await request('delete', 'games/' + id);
+		return await request('delete', `games/${id}`);
 	}
 
 };

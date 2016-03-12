@@ -8,8 +8,8 @@ import { GameDesk } from 'components/games';
 
 const Routes = (
 	<Route path="/" component={App}>
-		<IndexRoute component={Dashboard}/>
-		<Route path="/game/:gameId" component={GameDesk}/>
+		<IndexRoute component={Dashboard} />
+		<Route path="/game/:gameId" component={GameDesk} />
 		<Route path="*" component={NotFound} />
 	</Route>
 );

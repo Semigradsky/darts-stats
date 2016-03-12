@@ -26,7 +26,7 @@ const LatestUsersContainer = React.createClass({
 		return { users: [], rearrangedUsers: [] };
 	},
 
-	componentDidMount() {
+	componentWillMount() {
 		this.update();
 		UsersStore.addChangeListener(this.update);
 	},
@@ -52,7 +52,11 @@ const LatestUsersContainer = React.createClass({
 	onHover(from, to) {
 		if (from !== to) {
 			const { rearrangedUsers } = this.state;
-			arrange(rearrangedUsers, find(rearrangedUsers, { id: from }), find(rearrangedUsers, { id: to }));
+			arrange(
+				rearrangedUsers,
+				find(rearrangedUsers, { id: from }),
+				find(rearrangedUsers, { id: to })
+			);
 			this.setState({ rearrangedUsers });
 		}
 	},

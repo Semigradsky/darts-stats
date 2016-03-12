@@ -20,7 +20,7 @@ const AddUser = React.createClass({
 		return { users: [] };
 	},
 
-	componentDidMount() {
+	componentWillMount() {
 		this.update();
 		UsersStore.addChangeListener(this.update);
 	},

@@ -10,7 +10,7 @@ function status(response) {
 const cache = {};
 
 async function request(type, url, data) {
-	const handlerKey = type + ' ' + url;
+	const handlerKey = `${type} ${url}`;
 
 	const clearCache = () => {
 		delete cache[handlerKey];
@@ -24,7 +24,7 @@ async function request(type, url, data) {
 		method: type,
 		body: data ? JSON.stringify(data) : undefined,
 		cache: 'no-cache',
-		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+		headers: { Accept: 'application/json', 'Content-Type': 'application/json' }
 	})
 		.then(status).then(res => res.json())
 		.then(res => (clearCache(), res), err => { clearCache(); throw err; });

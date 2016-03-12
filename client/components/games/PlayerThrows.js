@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import keycode from 'keycode';
+import classNames from 'classnames';
 
 import './playerThrows.less';
 
@@ -38,15 +39,18 @@ const PlayerThrows = React.createClass({
 		const keyName = keycode(event);
 
 		if (!AVAILABLE_KEYS.includes(keyName)) {
-			return event.preventDefault();
+			event.preventDefault();
+			return;
 		}
 
 		if (keyName === '=' && !event.shiftKey) {
-			return event.preventDefault();
+			event.preventDefault();
+			return;
 		}
 
 		if (keyName === 'esc') {
-			return this.stopEditing();
+			this.stopEditing();
+			return;
 		}
 
 		if (keyName === 'enter') {
@@ -64,8 +68,12 @@ const PlayerThrows = React.createClass({
 	},
 
 	render() {
+		const className = classNames({
+			'player-throws': true,
+			editing: this.state.editing
+		});
 		return (
-			<div className={(this.state.editing ? 'editing ' : '') + 'player-throws'}>
+			<div className={className}>
 				<input ref="input" type="text"
 					onKeyDown={this.onKeyDown}
 					onBlur={this.stopEditing}

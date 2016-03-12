@@ -12,8 +12,11 @@
     // React rules
     "react/prop-types": 0,
     "react/jsx-indent-props": [2, "tab"],
+    "react/jsx-no-bind": 0,
     "react/jsx-boolean-value": 0,
     "react/sort-comp": 0,
-    "react/no-did-mount-set-state": 0
+    "react/prefer-es6-class": 1,                   // maybe change later
+    "react/prefer-stateless-function": 1,          // maybe change later
+    //"react/no-did-mount-set-state": 0
   }
 }

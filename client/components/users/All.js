@@ -5,9 +5,7 @@ import { UsersActions } from 'actions';
 import { User } from 'components/users';
 import { logError } from 'utils/log';
 
-const sortByScore = (x, y) => {
-	return x.score - y.score;
-};
+const sortByScore = (x, y) => x.score - y.score;
 
 const AllUsers = React.createClass({
 	async update() {
@@ -23,7 +21,7 @@ const AllUsers = React.createClass({
 		return { users: [] };
 	},
 
-	componentDidMount() {
+	componentWillMount() {
 		this.update();
 		UsersStore.addChangeListener(this.update);
 	},
@@ -47,7 +45,11 @@ const AllUsers = React.createClass({
 				{this.state.users.sort(sortByScore).map(user => (
 					<li key={user.id}>
 						<User {...user} />
-						<a href="" style={{ color: 'red' }} onClick={this.removeUser.bind(this, user.id)} className="remove fa fa-trash">Remove</a>
+						<a href="" style={{ color: 'red' }} className="remove fa fa-trash"
+							onClick={this.removeUser.bind(this, user.id)}
+						>
+							Remove
+						</a>
 					</li>
 				))}
 			</ul>

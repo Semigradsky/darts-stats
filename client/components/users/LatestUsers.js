@@ -12,7 +12,9 @@ const LatestUsers = ({ users, onMove, onHover, revert, removeFromLatest }) => (
 					onHover={onHover}
 					revert={revert}
 				/>
-				<a href="#" onClick={removeFromLatest.bind(null, user.id)} className="remove fa fa-remove"></a>
+				<a href="#" className="remove fa fa-remove"
+					onClick={removeFromLatest.bind(null, user.id)}
+				/>
 			</li>
 		))}
 	</ul>

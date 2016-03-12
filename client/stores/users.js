@@ -31,7 +31,7 @@ const UsersStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	async get(id) {
-		return await request('get', 'users/' + id);
+		return await request('get', `users/${id}`);
 	},
 
 	emitChange() {
@@ -63,16 +63,16 @@ function updateLatestUsers(users) {
 export const UsersHandlers = {
 
 	async [actions.CREATE](data) {
-		data.id = random.uuid();
-		return await request('post', 'users/', data);
+		const newUser = Object.assign({}, data, { id: random.uuid() });
+		return await request('post', 'users/', newUser);
 	},
 
 	async [actions.UPDATE](id, data) {
-		return await request('put', 'users/' + id, data);
+		return await request('put', `users/${id}`, data);
 	},
 
 	async [actions.REMOVE](id) {
-		return await request('delete', 'users/' + id);
+		return await request('delete', `users/${id}`);
 	},
 
 	async [actions.MOVE](from, to) {

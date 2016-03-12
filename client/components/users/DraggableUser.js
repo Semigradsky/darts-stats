@@ -13,7 +13,8 @@ const userSource = {
 		const result = monitor.getDropResult();
 
 		if (!result) {
-			return props.revert();
+			props.revert();
+			return;
 		}
 
 		props.onMove(props.id);

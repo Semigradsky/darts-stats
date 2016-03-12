@@ -30,7 +30,7 @@ const GameDesk = React.createClass({
 		}
 	},
 
-	componentDidMount() {
+	componentWillMount() {
 		this.update();
 		CurrentGameStore.addChangeListener(this.update);
 	},

@@ -1,7 +1,5 @@
 function propertyMatches(item, criteria) {
-	return (property) => {
-		return item[property] === criteria[property];
-	};
+	return (property) => item[property] === criteria[property];
 }
 
 export function findIndex(collection, criteria) {

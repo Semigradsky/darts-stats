@@ -24,8 +24,8 @@ function register(handlers, store) {
 }
 
 export default {
-	dispatch() {
-		dispatcher.dispatch.apply(dispatcher, arguments);
+	dispatch(...args) {
+		dispatcher.dispatch.apply(dispatcher, args);
 	},
 	run(done) {
 		register(GamesHandlers, GamesStore);

@@ -1,10 +1,8 @@
 import React from 'react';
 
-const Loading = React.createClass({
-	render() {
-		const spin = <i className="fa fa-refresh fa-spin fa-lg"></i>;
-		return !this.props.progress ? (<div>{this.props.children}</div>) : spin;
-	}
-});
+const Loading = ({ children, progress }) =>
+	!progress ?
+		(<div>{children}</div>) :
+		(<i className="fa fa-refresh fa-spin fa-lg"></i>);
 
 export default Loading;

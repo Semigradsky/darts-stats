@@ -11,7 +11,7 @@ const GameDeskCaption = React.createClass({
 		};
 	},
 
-	async componentDidMount() {
+	async componentWillMount() {
 		const usersIds = this.props.players;
 		const players = await Promise.all(usersIds.map(id => UsersStore.get(id)));
 		this.setState({ players });
