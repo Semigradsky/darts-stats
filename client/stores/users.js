@@ -5,7 +5,7 @@ import request from 'utils/request';
 import { actionNames as actions } from 'actions/users';
 import { arrange, find } from 'utils/collection';
 
-const CHANGE_EVENT = 'change';
+const CHANGE_EVENT = 'change_users';
 
 const cache = {};
 

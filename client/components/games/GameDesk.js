@@ -1,21 +1,11 @@
 import React from 'react';
 
-import { GamesStore } from 'stores';
+import { CurrentGameStore } from 'stores';
 import Loading from 'components/Loading';
 import { GameRound, GameDeskCaption } from 'components/games';
+import { logError } from 'utils/log';
 
 import './gameDesk.less';
-
-function addRound(rounds, countPlayers) {
-	const newRound = [];
-
-	let i = countPlayers;
-	while (i--) {
-		newRound.push('');
-	}
-
-	return rounds.concat([newRound]);
-}
 
 const GameDesk = React.createClass({
 
@@ -26,26 +16,27 @@ const GameDesk = React.createClass({
 		};
 	},
 
-	async componentDidMount() {
-		const gameId = this.props.params.gameId;
-		const data = await GamesStore.get(gameId);
+	async update() {
+		try {
+			const gameId = this.props.params.gameId;
+			const data = await CurrentGameStore.get(gameId);
 
-		if (!data.rounds.length) {
-			data.rounds = addRound([], data.players.length);
+			this.setState({
+				dataLoaded: true,
+				game: data
+			});
+		} catch (err) {
+			logError(err);
 		}
-
-		this.setState({
-			dataLoaded: true,
-			game: data
-		});
 	},
 
-	checkGame(round, pos, value) {
-		const game = this.state.game;
-		game.rounds[round][pos] = value;
+	componentDidMount() {
+		this.update();
+		CurrentGameStore.addChangeListener(this.update);
+	},
 
-		this.setState({ game });
-		console.log(game);
+	componentWillUnmount() {
+		CurrentGameStore.removeChangeListener(this.update);
 	},
 
 	render() {
@@ -56,12 +47,11 @@ const GameDesk = React.createClass({
 				<Loading progress={!dataLoaded}>
 					<span>{state}</span>
 					<GameDeskCaption players={players} />
-					{rounds.map((throws, pos) =>
+					{rounds.map((round, pos) =>
 						<GameRound
 							key={pos}
-							throws={throws}
-							round={pos}
-							update={this.checkGame}
+							round={round}
+							roundPos={pos}
 						/>
 					)}
 				</Loading>

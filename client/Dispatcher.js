@@ -1,8 +1,9 @@
 import { Dispatcher } from 'flux';
 
-import { GamesStore, UsersStore } from 'stores';
+import { GamesStore, UsersStore, CurrentGameStore } from 'stores';
 import { GamesHandlers } from 'stores/games';
 import { UsersHandlers } from 'stores/users';
+import { CurrentGameHandlers } from 'stores/currentGame';
 
 const dispatcher = new Dispatcher();
 
@@ -29,6 +30,7 @@ export default {
 	run(done) {
 		register(GamesHandlers, GamesStore);
 		register(UsersHandlers, UsersStore);
+		register(CurrentGameHandlers, CurrentGameStore);
 		done();
 	}
 };

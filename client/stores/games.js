@@ -4,7 +4,7 @@ import random from 'utils/random';
 import request from 'utils/request';
 import { actionNames as actions } from 'actions/games';
 
-const CHANGE_EVENT = 'change';
+const CHANGE_EVENT = 'change_games';
 
 const cache = {};
 

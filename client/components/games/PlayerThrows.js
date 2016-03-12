@@ -11,6 +11,7 @@ const AVAILABLE_KEYS = [].concat(
 	NUMBER_KEYS,
 	MOTION_KEYS,
 	'=',
+	'space',
 	'enter',
 	'backspace',
 	'delete',
@@ -21,15 +22,8 @@ const PlayerThrows = React.createClass({
 
 	getInitialState() {
 		return {
-			points: null,
 			editing: false
 		};
-	},
-
-	componentDidMount() {
-		this.setState({
-			points: this.props.throws ? +eval(this.props.throws) : null
-		});
 	},
 
 	componentDidUpdate() {
@@ -56,11 +50,7 @@ const PlayerThrows = React.createClass({
 		}
 
 		if (keyName === 'enter') {
-			let value = event.target.value;
-			value = value.replace(/\+\++/g, '+');
-			value = value.replace(/^\++/, '');
-			value = value.replace(/\++$/, '');
-			this.props.update(value);
+			this.props.update(event.target.value);
 			this.stopEditing();
 		}
 	},
@@ -85,7 +75,7 @@ const PlayerThrows = React.createClass({
 				<div className="points"
 					onClick={this.startEditing}
 				>
-					{this.state.points}
+					{this.props.value}
 				</div>
 			</div>
 		);
