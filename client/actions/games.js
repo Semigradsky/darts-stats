@@ -3,7 +3,11 @@ import createActions from 'utils/ActionsFabric';
 export const actionNames = {
 	CREATE: Symbol(),
 	REMOVE: Symbol(),
-	UPDATE: Symbol()
+	ADD_ROUND: Symbol(),
+	REMOVE_ROUND: Symbol(),
+	UPDATE_THROWS: Symbol(),
+	UPDATE: Symbol(),
+	SAVE: Symbol()
 };
 
 export default createActions(actionNames, 'Games');

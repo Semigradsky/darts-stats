@@ -9,6 +9,8 @@ import {
 	LatestUsersContainer
 } from 'components/users';
 
+import { ActiveGames } from 'components/games';
+
 const Dashboard = React.createClass({
 	getInitialState() {
 		return { createModalOpen: false };
@@ -31,6 +33,7 @@ const Dashboard = React.createClass({
 
 		return (
 			<div>
+				<ActiveGames />
 				<LatestUsersContainer />
 				<AddUser />
 				<button onClick={this.openCreateUser}>

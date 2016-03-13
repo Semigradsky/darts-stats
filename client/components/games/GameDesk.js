@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { CurrentGameStore } from 'stores';
+import { browserHistory } from 'react-router';
+
+import { GamesStore } from 'stores';
+import { GamesActions } from 'actions';
 import Loading from 'components/Loading';
 import { GameRound, GameDeskCaption } from 'components/games';
 import { logError } from 'utils/log';
@@ -19,7 +22,7 @@ const GameDesk = React.createClass({
 	async update() {
 		try {
 			const gameId = this.props.params.gameId;
-			const data = await CurrentGameStore.get(gameId);
+			const data = await GamesStore.get(gameId);
 
 			this.setState({
 				dataLoaded: true,
@@ -32,11 +35,16 @@ const GameDesk = React.createClass({
 
 	componentWillMount() {
 		this.update();
-		CurrentGameStore.addChangeListener(this.update);
+		GamesStore.addChangeListener(this.update);
+		this.unlistenHistory = browserHistory.listenBefore(async (location, done) => {
+			await GamesActions.save();
+			done();
+		});
 	},
 
 	componentWillUnmount() {
-		CurrentGameStore.removeChangeListener(this.update);
+		GamesStore.removeChangeListener(this.update);
+		this.unlistenHistory();
 	},
 
 	render() {

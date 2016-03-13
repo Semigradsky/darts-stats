@@ -1,14 +1,14 @@
 import React from 'react';
 
 import { PlayerThrows } from 'components/games';
-import { CurrentGameActions } from 'actions';
+import { GamesActions } from 'actions';
 import { logError } from 'utils/log';
 
 const GameRound = React.createClass({
 
 	async checkRound(pos, value) {
 		try {
-			await CurrentGameActions.update(this.props.roundPos, pos, value);
+			await GamesActions.updateThrows(this.props.roundPos, pos, value);
 		} catch (err) {
 			logError(err);
 		}

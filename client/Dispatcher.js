@@ -1,9 +1,8 @@
 import { Dispatcher } from 'flux';
 
-import { GamesStore, UsersStore, CurrentGameStore } from 'stores';
+import { GamesStore, UsersStore } from 'stores';
 import { GamesHandlers } from 'stores/games';
 import { UsersHandlers } from 'stores/users';
-import { CurrentGameHandlers } from 'stores/currentGame';
 
 const dispatcher = new Dispatcher();
 
@@ -14,7 +13,8 @@ function register(handlers, store) {
 		}
 
 		try {
-			const res = await handlers[action.actionType].apply(null, action.args);
+			const func = handlers[action.actionType];
+			const res = await func.apply(null, action.args);
 			store.emitChange();
 			action.resolve(res);
 		} catch (err) {
@@ -30,7 +30,6 @@ export default {
 	run(done) {
 		register(GamesHandlers, GamesStore);
 		register(UsersHandlers, UsersStore);
-		register(CurrentGameHandlers, CurrentGameStore);
 		done();
 	}
 };

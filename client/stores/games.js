@@ -4,9 +4,43 @@ import random from 'utils/random';
 import request from 'utils/request';
 import { actionNames as actions } from 'actions/games';
 
-const CHANGE_EVENT = 'change_games';
+const CHANGE_EVENT = 'change_game';
 
 const cache = {};
+
+function addRound(rounds, countPlayers) {
+	const newRound = [];
+
+	let i = countPlayers;
+	while (i--) {
+		newRound.push({
+			throws: '',
+			value: ''
+		});
+	}
+
+	return rounds.concat([newRound]);
+}
+
+function roundFull(throws) {
+	return throws.every(x => x.value !== '');
+}
+
+function roundEmpty(throws) {
+	return throws.every(x => x.value === '');
+}
+
+function formatThrows(value) {
+	return value
+		.replace(/^\++/, '')
+		.replace(/\++$/, '')
+		.replace(/\s/g, '')
+		.replace(/\+\+*/g, ' + ');
+}
+
+function evalThrows(throws) {
+	return throws ? +eval(throws) : ''; // eslint-disable-line no-eval
+}
 
 const GamesStore = Object.assign({}, EventEmitter.prototype, {
 	async getAll() {
@@ -20,7 +54,28 @@ const GamesStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	async get(id) {
-		return await request('get', `games/${id}`);
+		if (cache.id === id) {
+			return cache.game;
+		}
+
+		const game = await request('get', `games/${id}`);
+		cache.id = id;
+		cache.game = game;
+
+		cache.game.rounds = cache.game.rounds.map(
+			round => round.map(throws => ({
+				throws,
+				value: evalThrows(throws)
+			}))
+		);
+
+		const lastRound = cache.game.rounds[cache.game.rounds.length - 1];
+
+		if (!lastRound || roundFull(lastRound)) {
+			cache.game.rounds = addRound(cache.game.rounds, game.players.length);
+		}
+
+		return cache.game;
 	},
 
 	emitChange() {
@@ -35,6 +90,7 @@ const GamesStore = Object.assign({}, EventEmitter.prototype, {
 	removeChangeListener(callback) {
 		this.removeListener(CHANGE_EVENT, callback);
 	}
+
 });
 
 export const GamesHandlers = {
@@ -55,6 +111,51 @@ export const GamesHandlers = {
 
 	async [actions.REMOVE](id) {
 		return await request('delete', `games/${id}`);
+	},
+
+	async [actions.ADD_ROUND]() {
+		const game = cache.game;
+		game.rounds = addRound(game.rounds, game.players.length);
+	},
+
+	async [actions.REMOVE_ROUND](round) {
+		cache.game.rounds.splice(round, 1);
+	},
+
+	async [actions.UPDATE_THROWS](roundPos, pos, throws) {
+		const round = cache.game.rounds[roundPos];
+		const lastRound = cache.game.rounds[cache.game.rounds.length - 1];
+		const penultRound = cache.game.rounds[cache.game.rounds.length - 2];
+		const formattedThrows = formatThrows(throws);
+
+		round[pos] = {
+			throws: formattedThrows,
+			value: evalThrows(formattedThrows)
+		};
+
+		if (!formattedThrows && roundEmpty(round)) {
+			if (round === lastRound && penultRound && roundFull(penultRound)) {
+				return;
+			}
+
+			GamesHandlers[actions.REMOVE_ROUND](roundPos);
+			return;
+		}
+
+		if (round === penultRound && !roundFull(penultRound) && roundEmpty(lastRound)) {
+			GamesHandlers[actions.REMOVE_ROUND](cache.game.rounds.length - 1);
+			return;
+		}
+
+		if (round === lastRound && roundFull(lastRound)) {
+			GamesHandlers[actions.ADD_ROUND]();
+		}
+	},
+
+	async [actions.SAVE]() {
+		const data = Object.assign({}, cache.game);
+		data.rounds = data.rounds.map(round => round.map(x => x.throws));
+		return await GamesHandlers[actions.UPDATE](cache.id, data);
 	}
 
 };
