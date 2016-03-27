@@ -49,12 +49,15 @@ const GameDesk = React.createClass({
 
 	render() {
 		const dataLoaded = this.state.dataLoaded;
-		const { state, players = [], rounds = [] } = this.state.game;
+		const { winnerPos, players = [], rounds = [], points = [] } = this.state.game;
 		return (
 			<div className="game-desk">
 				<Loading progress={!dataLoaded}>
-					<span>{state}</span>
-					<GameDeskCaption players={players} />
+					<GameDeskCaption
+						winnerPos={winnerPos}
+						players={players}
+						points={points}
+					/>
 					{rounds.map((round, pos) =>
 						<GameRound
 							key={pos}

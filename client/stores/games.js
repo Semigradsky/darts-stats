@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 
 import random from 'utils/random';
 import request from 'utils/request';
+import { findIndex } from 'utils/collection';
 import { actionNames as actions } from 'actions/games';
 
 const CHANGE_EVENT = 'change_game';
@@ -32,14 +33,20 @@ function roundEmpty(throws) {
 
 function formatThrows(value) {
 	return value
-		.replace(/^\++/, '')
-		.replace(/\++$/, '')
+		.replace(/^\s*\++/, '')
+		.replace(/\++\s*$/, '')
 		.replace(/\s/g, '')
 		.replace(/\+\+*/g, ' + ');
 }
 
 function evalThrows(throws) {
 	return throws ? +eval(throws) : ''; // eslint-disable-line no-eval
+}
+
+function calculatePoints(rounds) {
+	return rounds.reduce((acc, round) =>
+		round.map((x, pos) => (acc[pos] || 0) + (x.value || 0))
+	, []);
 }
 
 const GamesStore = Object.assign({}, EventEmitter.prototype, {
@@ -68,6 +75,8 @@ const GamesStore = Object.assign({}, EventEmitter.prototype, {
 				value: evalThrows(throws)
 			}))
 		);
+
+		cache.game.points = calculatePoints(cache.game.rounds);
 
 		const lastRound = cache.game.rounds[cache.game.rounds.length - 1];
 
@@ -132,6 +141,19 @@ export const GamesHandlers = {
 			throws: formattedThrows,
 			value: evalThrows(formattedThrows)
 		};
+
+		cache.game.points = calculatePoints(cache.game.rounds);
+
+		if (cache.game.points.some(x => x > 30)) {
+			const winnerPos = findIndex(cache.game.points, x => x > 30);
+			cache.game.winnerPos = winnerPos;
+			cache.game.state = 'FINISH';
+		} else {
+			if (cache.game.winnerPos !== undefined) {
+				cache.game.winnerPos = undefined;
+				cache.game.state = 'IN PROGRESS';
+			}
+		}
 
 		if (!formattedThrows && roundEmpty(round)) {
 			if (round === lastRound && penultRound && roundFull(penultRound)) {

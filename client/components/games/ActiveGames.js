@@ -42,7 +42,7 @@ const ActiveGames = React.createClass({
 			<div className="active-games">
 				<Loading progress={!dataLoaded}>
 					{games.map(game =>
-						<Link to={`/game/${game.id}`} key={game.id}>{game.id}</Link>
+						<Link to={`/game/${game.id}`} key={game.id}>{game.id} ({game.state})</Link>
 					)}
 				</Loading>
 			</div>

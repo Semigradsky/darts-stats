@@ -18,12 +18,14 @@ const GameDeskCaption = React.createClass({
 	},
 
 	render() {
+		const { winnerPos, points } = this.props;
 		return (
 			<div className="game-players">
 				{
 					this.state.players.map((user, pos) => (
-						<div key={pos}>
-							{pos}
+						<div className="game-player" key={pos}>
+							{winnerPos === pos ? <div className="game-winner fa fa-trophy"></div> : null}
+							{points[pos]}
 							<User {...user} />
 						</div>
 					))

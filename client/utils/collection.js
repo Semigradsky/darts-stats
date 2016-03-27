@@ -3,9 +3,19 @@ function propertyMatches(item, criteria) {
 }
 
 export function findIndex(collection, criteria) {
-	for (let i = 0, l = collection.length; i < l; i++) {
-		if (Object.keys(criteria).every(propertyMatches(collection[i], criteria))) {
-			return i;
+	if (typeof criteria === 'object') {
+		for (let i = 0, l = collection.length; i < l; i++) {
+			if (Object.keys(criteria).every(propertyMatches(collection[i], criteria))) {
+				return i;
+			}
+		}
+	}
+
+	if (typeof criteria === 'function') {
+		for (let i = 0, l = collection.length; i < l; i++) {
+			if (criteria(collection[i])) {
+				return i;
+			}
 		}
 	}
 
