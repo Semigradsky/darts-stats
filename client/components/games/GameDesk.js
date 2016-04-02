@@ -1,12 +1,14 @@
 import React from 'react';
 
 import { browserHistory } from 'react-router';
+import Modal from 'components/popups/Modal';
 
 import { GamesStore } from 'stores';
 import { GamesActions } from 'actions';
 import Loading from 'components/Loading';
-import { GameRound, GameDeskCaption } from 'components/games';
+import { GameRound, GameDeskCaption, GameWinners } from 'components/games';
 import { logError } from 'utils/log';
+import { GameStates } from 'constants/games';
 
 import './gameDesk.less';
 
@@ -47,9 +49,13 @@ const GameDesk = React.createClass({
 		this.unlistenHistory();
 	},
 
+	async finishGame() {
+		await GamesActions.finish();
+	},
+
 	render() {
 		const dataLoaded = this.state.dataLoaded;
-		const { winnerPos, players = [], rounds = [], points = [] } = this.state.game;
+		const { winnerPos, state, players = [], rounds = [], points = [] } = this.state.game;
 		return (
 			<div className="game-desk">
 				<Loading progress={!dataLoaded}>
@@ -65,6 +71,17 @@ const GameDesk = React.createClass({
 							roundPos={pos}
 						/>
 					)}
+					{state === GameStates.NOT_READY ? (
+						<button onClick={this.finishGame}>Finish game</button>
+					) : null}
+					{state === GameStates.READY ? (
+						<Modal>
+							<GameWinners
+								players={players}
+								winnerPos={winnerPos}
+							/>
+						</Modal>
+					) : null}
 				</Loading>
 			</div>
 		);

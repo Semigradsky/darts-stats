@@ -1,0 +1,45 @@
+.winner-container {
+	display: flex;
+	justify-content: space-around;
+	margin-bottom: 150px;
+
+	.game-winner {
+		font-size: 48px;
+		top: 40px;
+		left: 0;
+		opacity: 0;
+		transition: opacity 2s;
+	}
+
+	&[data-winner] .game-winner {
+		opacity: 1;
+	}
+}
+
+.winner-player {
+	transition: top 2s;
+	top: 50px;
+	position: relative;
+
+	[data-winner] & {
+		top: 100px;
+	}
+
+	[data-winner="1"] &:nth-of-type(1),
+	[data-winner="2"] &:nth-of-type(2),
+	[data-winner="3"] &:nth-of-type(3),
+	[data-winner="4"] &:nth-of-type(4),
+	[data-winner="5"] &:nth-of-type(5),
+	[data-winner="6"] &:nth-of-type(6) {
+		top: 0;
+	}
+}
+
+.winner-buttons {
+	display: flex;
+	justify-content: space-around;
+
+	button {
+
+	}
+}

@@ -7,7 +7,9 @@ export const actionNames = {
 	REMOVE_ROUND: Symbol(),
 	UPDATE_THROWS: Symbol(),
 	UPDATE: Symbol(),
-	SAVE: Symbol()
+	SAVE: Symbol(),
+	CONTINUE: Symbol(),
+	FINISH: Symbol()
 };
 
 export default createActions(actionNames, 'Games');

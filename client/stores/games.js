@@ -4,6 +4,8 @@ import random from 'utils/random';
 import request from 'utils/request';
 import { findIndex } from 'utils/collection';
 import { actionNames as actions } from 'actions/games';
+import { UsersStore } from 'stores';
+import { GameStates } from 'constants/games';
 
 const CHANGE_EVENT = 'change_game';
 
@@ -76,13 +78,11 @@ const GamesStore = Object.assign({}, EventEmitter.prototype, {
 			}))
 		);
 
+		cache.game.players = await Promise.all(
+			cache.game.players.map(userId => UsersStore.get(userId))
+		);
+
 		cache.game.points = calculatePoints(cache.game.rounds);
-
-		const lastRound = cache.game.rounds[cache.game.rounds.length - 1];
-
-		if (!lastRound || roundFull(lastRound)) {
-			cache.game.rounds = addRound(cache.game.rounds, game.players.length);
-		}
 
 		return cache.game;
 	},
@@ -108,8 +108,8 @@ export const GamesHandlers = {
 		const game = {
 			id: random.uuid(),
 			players: data,
-			state: 'IN PROGRESS',
-			rounds: []
+			state: GameStates.IN_PROGRESS,
+			rounds: addRound([], data.length)
 		};
 		return await request('post', 'games/', game);
 	},
@@ -147,11 +147,11 @@ export const GamesHandlers = {
 		if (cache.game.points.some(x => x > 30)) {
 			const winnerPos = findIndex(cache.game.points, x => x > 30);
 			cache.game.winnerPos = winnerPos;
-			cache.game.state = 'FINISH';
+			cache.game.state = GameStates.READY;
 		} else {
 			if (cache.game.winnerPos !== undefined) {
 				cache.game.winnerPos = undefined;
-				cache.game.state = 'IN PROGRESS';
+				cache.game.state = GameStates.IN_PROGRESS;
 			}
 		}
 
@@ -174,9 +174,20 @@ export const GamesHandlers = {
 		}
 	},
 
+	async [actions.CONTINUE]() {
+		cache.game.state = GameStates.NOT_READY;
+	},
+
+	async [actions.FINISH]() {
+		cache.game.state = GameStates.FINISH;
+		await GamesHandlers[actions.SAVE]();
+	},
+
 	async [actions.SAVE]() {
 		const data = Object.assign({}, cache.game);
 		data.rounds = data.rounds.map(round => round.map(x => x.throws));
+		data.players = data.players.map(player => player.id);
+		delete data.points;
 		return await GamesHandlers[actions.UPDATE](cache.id, data);
 	}
 
