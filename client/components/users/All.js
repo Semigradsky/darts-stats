@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from 'classnames';
 
 import { UsersStore } from 'stores';
 import { UsersActions } from 'actions';
@@ -41,7 +42,7 @@ const AllUsers = React.createClass({
 
 	render() {
 		return (
-			<ul>
+			<ul className={cx(this.props.className)}>
 				{this.state.users.sort(sortByScore).map(user => (
 					<li key={user.id}>
 						<User {...user} />

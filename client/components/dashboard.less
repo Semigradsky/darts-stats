@@ -1,0 +1,23 @@
+.dashboard {
+	display: grid;
+	grid-template-areas: "dashboard--active-games | dashboard--all-users"
+                       "dashboard--latest-users | dashboard--all-users"
+                       "dashboard--create-user  | dashboard--all-users";
+  grid-template-columns: auto 350px;
+}
+
+.dashboard--active-games {
+	grid-area: dashboard--active-games;
+}
+
+.dashboard--latest-users {
+	grid-area: dashboard--latest-users;
+}
+
+.dashboard--create-user {
+	grid-area: dashboard--create-user;
+}
+
+.dashboard--all-users {
+	grid-area: dashboard--all-users;
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import cx from 'classnames';
 
 import { GamesStore } from 'stores';
 import Loading from 'components/Loading';
@@ -39,7 +40,7 @@ const ActiveGames = React.createClass({
 	render() {
 		const { dataLoaded, games } = this.state;
 		return (
-			<div className="active-games">
+			<div className={cx(this.props.className, 'active-games')}>
 				<Loading progress={!dataLoaded}>
 					{games.map(game =>
 						<Link to={`/game/${game.id}`} key={game.id}>{game.id} ({game.state})</Link>

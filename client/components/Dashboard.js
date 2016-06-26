@@ -11,6 +11,8 @@ import {
 
 import { ActiveGames } from 'components/games';
 
+import './dashboard.less';
+
 const Dashboard = React.createClass({
 	getInitialState() {
 		return { createModalOpen: false };
@@ -32,15 +34,19 @@ const Dashboard = React.createClass({
 		) : '';
 
 		return (
-			<div>
-				<ActiveGames />
-				<LatestUsersContainer />
-				<AddUser />
-				<button onClick={this.openCreateUser}>
-					Create new
-				</button>
-				{createModal}
-				<AllUsers />
+			<div className="dashboard">
+				<ActiveGames className="dashboard--active-games" />
+				<div className="dashboard--latest-users">
+					<LatestUsersContainer />
+					<AddUser />
+				</div>
+				<div className="dashboard--create-user">
+					<button onClick={this.openCreateUser}>
+						Create new
+					</button>
+					{createModal}
+				</div>
+				<AllUsers className="dashboard--all-users" />
 			</div>
 		);
 	}

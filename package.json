@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/Semigradsky/darts-stats",
   "dependencies": {
-    "bootstrap": "^3.3.5",
     "classnames": "^2.2.3",
     "flux": "^2.1.1",
     "font-awesome": "^4.5.0",
@@ -31,6 +30,7 @@
     "formsy-react-components": "^0.6.3",
     "json-server": "^0.8.4",
     "keycode": "^2.1.1",
+    "normalize.css": "^4.1.1",
     "react": "^0.14.7",
     "react-dnd": "^2.1.2",
     "react-dnd-html5-backend": "^2.1.2",

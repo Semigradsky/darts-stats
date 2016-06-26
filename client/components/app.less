@@ -1,0 +1,27 @@
+.app-container {
+	height: 100%;
+	display: grid;
+	grid-template-areas: "page-header"
+											 "page-content"
+											 "page-footer";
+	grid-template-rows: 60px auto 60px;
+}
+
+.app-header {
+	grid-area: page-header;
+}
+
+.app-footer {
+	grid-area: page-footer;
+}
+
+.app-content {
+	grid-area: page-content;
+	margin: 20px 5% 20px 5%;
+	max-width: 1500px;
+
+	@media (max-width: 780px) {
+		margin: 10px 2% 10px 2%;
+	}
+}
+

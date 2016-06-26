@@ -1,22 +1,21 @@
-import React from 'react';
-import { IndexLink } from 'react-router';
+import 'normalize.css';
+import 'font-awesome/css/font-awesome.css';
+import './common.less';
+import './app.less';
 
+import React from 'react';
+
+import PageHeader from 'components/header/PageHeader';
 import PageFooter from 'components/footer/PageFooter';
 
-const App = React.createClass({
-
-	render() {
-		return (
-			<div id="content">
-				<IndexLink to="/">Home</IndexLink>
-				<div className="container">
-					{this.props.children}
-				</div>
-				<PageFooter />
-			</div>
-		);
-	}
-
-});
+const App = ({ children }) => (
+	<div className="app-container">
+		<PageHeader className="app-header" />
+		<div className="app-content">
+			{children}
+		</div>
+		<PageFooter className="app-footer" />
+	</div>
+);
 
 export default App;
