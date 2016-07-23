@@ -27,7 +27,7 @@ async function request(type, url, data) {
 		headers: { Accept: 'application/json', 'Content-Type': 'application/json' }
 	})
 		.then(status).then(res => res.json())
-		.then(res => (clearCache(), res), err => { clearCache(); throw err; });
+		.then(res => { clearCache(); return res; }, err => { clearCache(); throw err; });
 
 	return await cache[handlerKey];
 }

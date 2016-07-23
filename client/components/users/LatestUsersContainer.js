@@ -90,8 +90,8 @@ const LatestUsersContainer = React.createClass({
 					users={this.state.rearrangedUsers}
 					onMove={this.onMove}
 					onHover={this.onHover}
-					revert = {this.revert}
-					removeFromLatest = {this.removeFromLatest}
+					revert={this.revert}
+					removeFromLatest={this.removeFromLatest}
 				/>
 				{
 					this.state.users.length >= 2 ?

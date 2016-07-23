@@ -64,7 +64,7 @@ const GameDesk = React.createClass({
 						players={players}
 						points={points}
 					/>
-					{rounds.map((round, pos) =>
+					{Array.from(rounds).map((round, pos) =>
 						<GameRound
 							key={pos}
 							round={round}

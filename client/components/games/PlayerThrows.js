@@ -74,13 +74,16 @@ const PlayerThrows = React.createClass({
 		});
 		return (
 			<div className={className}>
-				<input ref="input" type="text"
+				<input
+					ref="input"
+					type="text"
 					onKeyDown={this.onKeyDown}
 					onBlur={this.stopEditing}
 					onFocus={this.startEditing}
 					defaultValue={this.props.throws}
 				/>
-				<div className="points"
+				<div
+					className="points"
 					onClick={this.startEditing}
 				>
 					{this.props.value}

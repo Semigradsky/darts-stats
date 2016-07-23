@@ -1,8 +1,13 @@
 import React from 'react';
 
-const Loading = ({ children, progress }) =>
-	!progress ?
-		(<div>{children}</div>) :
-		(<i className="fa fa-refresh fa-spin fa-lg"></i>);
+const LoadingSpin = <i className="fa fa-refresh fa-spin fa-lg"></i>;
+
+const Loading = ({ children, progress }) => {
+	if (progress) {
+		return LoadingSpin;
+	}
+
+	return <div>{children}</div>;
+};
 
 export default Loading;

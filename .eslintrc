@@ -1,22 +1,26 @@
 {
-  "extends": ["airbnb"],
-  "parser": "babel-eslint",
-  "rules": {
-    // Best Practices
-    "no-unused-expressions": [2, { allowShortCircuit: true }],
-    // Possible Errors
-    "comma-dangle": [2, "never"],
-    // Style
-    "indent": [2, "tab"],
-    "new-cap": 0,
-    // React rules
-    "react/prop-types": 0,
-    "react/jsx-indent-props": [2, "tab"],
-    "react/jsx-no-bind": 0,
-    "react/jsx-boolean-value": 0,
-    "react/sort-comp": 0,
-    "react/prefer-es6-class": 1,                   // maybe change later
-    "react/prefer-stateless-function": 1,          // maybe change later
-    //"react/no-did-mount-set-state": 0
-  }
+	"extends": ["airbnb"],
+	"parser": "babel-eslint",
+	"rules": {
+		// Best Practices
+		"no-unused-expressions": [2, { "allowShortCircuit": true }],
+		// Possible Errors
+		"comma-dangle": [2, "never"],
+		// Style
+		"indent": [2, "tab"],
+		"new-cap": 0,
+		// React rules
+		"react/prop-types": 0,
+		"react/jsx-indent": [2, "tab"],
+		"react/jsx-indent-props": [2, "tab"],
+		"react/jsx-no-bind": 0,
+		"react/jsx-boolean-value": 0,
+		"react/sort-comp": 0,
+		"react/prefer-es6-class": 1,                   // maybe change later
+		"react/prefer-stateless-function": 1,          // maybe change later
+		//"react/no-did-mount-set-state": 0,
+	},
+	"settings": {
+		"import/resolver": "webpack"
+	}
 }

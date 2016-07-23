@@ -46,7 +46,10 @@ const AllUsers = React.createClass({
 				{this.state.users.sort(sortByScore).map(user => (
 					<li key={user.id}>
 						<User {...user} />
-						<a href="" style={{ color: 'red' }} className="remove fa fa-trash"
+						<a
+							href=""
+							style={{ color: 'red' }}
+							className="remove fa fa-trash"
 							onClick={this.removeUser.bind(this, user.id)}
 						>
 							Remove

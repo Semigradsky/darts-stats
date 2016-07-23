@@ -7,49 +7,11 @@ import { actionNames as actions } from 'actions/games';
 import { UsersStore } from 'stores';
 import { GameStates } from 'constants/games';
 
+import GameRounds from 'models/GameRounds';
+
 const CHANGE_EVENT = 'change_game';
 
 const cache = {};
-
-function addRound(rounds, countPlayers) {
-	const newRound = [];
-
-	let i = countPlayers;
-	while (i--) {
-		newRound.push({
-			throws: '',
-			value: ''
-		});
-	}
-
-	return rounds.concat([newRound]);
-}
-
-function roundFull(throws) {
-	return throws.every(x => x.value !== '');
-}
-
-function roundEmpty(throws) {
-	return throws.every(x => x.value === '');
-}
-
-function formatThrows(value) {
-	return value
-		.replace(/^\s*\++/, '')
-		.replace(/\++\s*$/, '')
-		.replace(/\s/g, '')
-		.replace(/\+\+*/g, ' + ');
-}
-
-function evalThrows(throws) {
-	return throws ? +eval(throws) : ''; // eslint-disable-line no-eval
-}
-
-function calculatePoints(rounds) {
-	return rounds.reduce((acc, round) =>
-		round.map((x, pos) => (acc[pos] || 0) + (x.value || 0))
-	, []);
-}
 
 const GamesStore = Object.assign({}, EventEmitter.prototype, {
 	async getAll() {
@@ -68,21 +30,16 @@ const GamesStore = Object.assign({}, EventEmitter.prototype, {
 		}
 
 		const game = await request('get', `games/${id}`);
-		cache.id = id;
-		cache.game = game;
 
-		cache.game.rounds = cache.game.rounds.map(
-			round => round.map(throws => ({
-				throws,
-				value: evalThrows(throws)
-			}))
-		);
+		cache.id = id;
+
+		cache.game = game;
+		cache.game.rounds = new GameRounds(game.players.length, game.rounds);
+		cache.game.points = cache.game.rounds.getPoints();
 
 		cache.game.players = await Promise.all(
-			cache.game.players.map(userId => UsersStore.get(userId))
+			game.players.map(userId => UsersStore.get(userId))
 		);
-
-		cache.game.points = calculatePoints(cache.game.rounds);
 
 		return cache.game;
 	},
@@ -109,8 +66,9 @@ export const GamesHandlers = {
 			id: random.uuid(),
 			players: data,
 			state: GameStates.IN_PROGRESS,
-			rounds: addRound([], data.length)
+			rounds: [Array(data.length).fill('')]
 		};
+
 		return await request('post', 'games/', game);
 	},
 
@@ -123,26 +81,16 @@ export const GamesHandlers = {
 	},
 
 	async [actions.ADD_ROUND]() {
-		const game = cache.game;
-		game.rounds = addRound(game.rounds, game.players.length);
+		cache.game.rounds.add();
 	},
 
 	async [actions.REMOVE_ROUND](round) {
-		cache.game.rounds.splice(round, 1);
+		cache.game.rounds.remove(round);
 	},
 
 	async [actions.UPDATE_THROWS](roundPos, pos, throws) {
-		const round = cache.game.rounds[roundPos];
-		const lastRound = cache.game.rounds[cache.game.rounds.length - 1];
-		const penultRound = cache.game.rounds[cache.game.rounds.length - 2];
-		const formattedThrows = formatThrows(throws);
-
-		round[pos] = {
-			throws: formattedThrows,
-			value: evalThrows(formattedThrows)
-		};
-
-		cache.game.points = calculatePoints(cache.game.rounds);
+		cache.game.rounds.update(roundPos, pos, throws);
+		cache.game.points = cache.game.rounds.getPoints();
 
 		if (cache.game.points.some(x => x > 30)) {
 			const winnerPos = findIndex(cache.game.points, x => x > 30);
@@ -153,24 +101,6 @@ export const GamesHandlers = {
 				cache.game.winnerPos = undefined;
 				cache.game.state = GameStates.IN_PROGRESS;
 			}
-		}
-
-		if (!formattedThrows && roundEmpty(round)) {
-			if (round === lastRound && penultRound && roundFull(penultRound)) {
-				return;
-			}
-
-			GamesHandlers[actions.REMOVE_ROUND](roundPos);
-			return;
-		}
-
-		if (round === penultRound && !roundFull(penultRound) && roundEmpty(lastRound)) {
-			GamesHandlers[actions.REMOVE_ROUND](cache.game.rounds.length - 1);
-			return;
-		}
-
-		if (round === lastRound && roundFull(lastRound)) {
-			GamesHandlers[actions.ADD_ROUND]();
 		}
 	},
 
@@ -185,7 +115,7 @@ export const GamesHandlers = {
 
 	async [actions.SAVE]() {
 		const data = Object.assign({}, cache.game);
-		data.rounds = data.rounds.map(round => round.map(x => x.throws));
+		data.rounds = data.rounds.toApi();
 		data.players = data.players.map(player => player.id);
 		delete data.points;
 		return await GamesHandlers[actions.UPDATE](cache.id, data);

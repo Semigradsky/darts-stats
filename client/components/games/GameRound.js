@@ -18,7 +18,7 @@ const GameRound = React.createClass({
 		return (
 			<div className="game-round">
 				{
-					this.props.round.map((playerThrows, pos) => (
+					Array.from(this.props.round).map((playerThrows, pos) => (
 						<PlayerThrows
 							key={pos + playerThrows.throws}
 							throws={playerThrows.throws}

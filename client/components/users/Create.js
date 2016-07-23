@@ -1,6 +1,6 @@
 import React from 'react';
 import Formsy from 'formsy-react';
-import FRC from 'formsy-react-components';
+import { Input, Row } from 'formsy-react-components';
 
 import { UsersActions } from 'actions';
 import Loading from 'components/Loading';
@@ -33,14 +33,14 @@ const CreateUser = React.createClass({
 	render() {
 		return (
 			<Formsy.Form onValidSubmit={this.onSubmit} className="form-horizontal form">
-				<FRC.Input type="text" name="name" label="Name" required />
-				<FRC.Row layout="horizontal">
+				<Input type="text" name="name" label="Name" required />
+				<Row layout="horizontal">
 					<Loading progress={!this.state.dataSaved}>
 						<input className="btn btn-default" onClick={this.close} type="button" value="Cancel" />
 						<span> </span>
 						<input className="btn btn-primary" formNoValidate={true} type="submit" value="Create" />
 					</Loading>
-				</FRC.Row>
+				</Row>
 			</Formsy.Form>
 		);
 	}
